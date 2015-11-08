@@ -3,24 +3,25 @@ package me.xgh69.pvptoggle;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.UUID;
 
 public class API
 {
 	PvpToggle plugin = PvpToggle.getInstance();
 	
-	public boolean containsPvpSettings(String playerName)
+	public boolean containsPvpSettings(UUID uid)
 	{
-		return plugin.containsPvpSettings(playerName);
+		return plugin.containsPvpSettings(uid);
 	}
 	
-	public boolean getPvpSettings(String playerName)
+	public boolean getPvpSettings(UUID uid)
 	{
-		return plugin.getPvpSettings(playerName);
+		return plugin.getPvpSettings(uid);
 	}
 	
-	public void setPvpSettings(String playerName, boolean b)
+	public void setPvpSettings(UUID uid, boolean b)
 	{
-		plugin.setPvpSettings(playerName, b);
+		plugin.setPvpSettings(uid, b);
 	}
 	
 	public boolean isAllowedCommand(String commandName)

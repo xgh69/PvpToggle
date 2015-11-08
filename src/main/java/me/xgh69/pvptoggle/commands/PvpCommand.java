@@ -27,24 +27,24 @@ public class PvpCommand implements CommandExecutor
 		{	
 			if(args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("on"))
 			{
-				plugin.setPvpSettings(player.getName(), true);
+				plugin.setPvpSettings(player.getUniqueId(), true);
 				player.sendMessage(plugin.getMessage("cmd_pvp_enable").replace("$player", player.getName()));
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("off"))
 			{
-				plugin.setPvpSettings(player.getName(), false);
+				plugin.setPvpSettings(player.getUniqueId(), false);
 				player.sendMessage(plugin.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("status"))
 			{
-				if(plugin.getPvpSettings(player.getName()))
+				if(plugin.getPvpSettings(player.getUniqueId()))
 				{
 					player.sendMessage(plugin.getMessage("cmd_pvp_status") + plugin.getMessage("cmd_pvp_status_disable"));
 					return true;
 				}
-				else if(!plugin.getPvpSettings(player.getName()))
+				else if(!plugin.getPvpSettings(player.getUniqueId()))
 				{
 					player.sendMessage(plugin.getMessage("cmd_pvp_status") + plugin.getMessage("cmd_pvp_status_enable"));
 					return true;

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import me.xgh69.pvptoggle.commands.PvpCommand;
 import me.xgh69.pvptoggle.commands.PvpToggleCommand;
@@ -190,21 +191,21 @@ public final class PvpToggle extends JavaPlugin
 		return api;
 	}
 	
-	public boolean containsPvpSettings(String playerName)
+	public boolean containsPvpSettings(UUID uid)
 	{
 		reloadConfig();
-		return config.contains("users." + playerName);
+		return config.contains("users." + uid.toString());
 	}
 	
-	public boolean getPvpSettings(String playerName)
+	public boolean getPvpSettings(UUID uid)
 	{
 		reloadConfig();
-		return config.getBoolean("users." + playerName);
+		return config.getBoolean("users." + uid.toString());
 	}
 	
-	public void setPvpSettings(String playerName, boolean b)
+	public void setPvpSettings(UUID uid, boolean b)
 	{
-		config.set("users." + playerName, b);
+		config.set("users." + uid.toString(), b);
 		saveConfig();
 	}
 	

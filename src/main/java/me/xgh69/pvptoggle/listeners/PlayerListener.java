@@ -29,9 +29,9 @@ public class PlayerListener implements Listener
 	public void onJoin(PlayerJoinEvent evt)
 	{
 		Player player = evt.getPlayer();
-		if(!plugin.containsPvpSettings(player.getName()))
+		if(!plugin.containsPvpSettings(player.getUniqueId()))
 		{
-			plugin.setPvpSettings(player.getName(), true);
+			plugin.setPvpSettings(player.getUniqueId(), true);
 			player.sendMessage(plugin.getMessage("first_join").replace("$player", player.getName()));
 		}
 		
