@@ -32,14 +32,14 @@ public class PvpToggleCommand implements CommandExecutor
 				if(plugin.getLang().equalsIgnoreCase("pl"))
 				{
 					sender.sendMessage(ChatColor.GREEN + "Autor: xgh69");
-					sender.sendMessage(ChatColor.GREEN + "Wersja: 1.0-beta");
+					sender.sendMessage(ChatColor.GREEN + "Wersja: 1.0");
 					sender.sendMessage(ChatColor.GREEN + "Ten plugin dodaje prywatne ustawienia pvp dla graczy. Flagi WorldGuard'a sa wspierane.");
 					return true;
 				}
 				else
 				{
 					sender.sendMessage(ChatColor.GREEN + "Author: xgh69");
-					sender.sendMessage(ChatColor.GREEN + "Version: 1.0-beta");
+					sender.sendMessage(ChatColor.GREEN + "Version: 1.0");
 					sender.sendMessage(ChatColor.GREEN + "This plugin add private pvp settings for players. WorldGuard flags are supported.");
 					return true;
 				}
