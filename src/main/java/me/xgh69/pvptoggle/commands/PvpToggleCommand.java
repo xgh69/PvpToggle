@@ -19,12 +19,31 @@ public class PvpToggleCommand implements CommandExecutor
 			sender.sendMessage(plugin.getMessage("cmd_pvptoggle_noperm").replace("$player", sender.getName()));
 			return false;
 		}
-		
-		if(args[0].equalsIgnoreCase("reload"))
+		if(args.length == 1)
 		{
-			plugin.reloadConfig();
-			sender.sendMessage(plugin.getMessage("cmd_pvptoggle_reload").replace("$player", sender.getName()));
-			return true;
+			if(args[0].equalsIgnoreCase("reload"))
+			{
+				plugin.reloadConfig();
+				sender.sendMessage(plugin.getMessage("cmd_pvptoggle_reload").replace("$player", sender.getName()));
+				return true;
+			}
+			else
+			{
+				if(plugin.getLang().equalsIgnoreCase("pl"))
+				{
+					sender.sendMessage(ChatColor.GREEN + "Autor: xgh69");
+					sender.sendMessage(ChatColor.GREEN + "Wersja: 1.0-beta");
+					sender.sendMessage(ChatColor.GREEN + "Ten plugin dodaje prywatne ustawienia pvp dla graczy. Flagi WorldGuard'a sa wspierane.");
+					return true;
+				}
+				else
+				{
+					sender.sendMessage(ChatColor.GREEN + "Author: xgh69");
+					sender.sendMessage(ChatColor.GREEN + "Version: 1.0-beta");
+					sender.sendMessage(ChatColor.GREEN + "This plugin add private pvp settings for players. WorldGuard flags are supported.");
+					return true;
+				}
+			}
 		}
 		else
 		{
@@ -32,16 +51,18 @@ public class PvpToggleCommand implements CommandExecutor
 			{
 				sender.sendMessage(ChatColor.GREEN + "Autor: xgh69");
 				sender.sendMessage(ChatColor.GREEN + "Wersja: 1.0-beta");
-				sender.sendMessage("Ten plugin dodaje prywatne ustawienia pvp dla graczy. Flagi WorldGuard'a sa wspierane.");
+				sender.sendMessage(ChatColor.GREEN + "Ten plugin dodaje prywatne ustawienia pvp dla graczy. Flagi WorldGuard'a sa wspierane.");
+				return true;
 			}
 			else
 			{
 				sender.sendMessage(ChatColor.GREEN + "Author: xgh69");
 				sender.sendMessage(ChatColor.GREEN + "Version: 1.0-beta");
-				sender.sendMessage("This plugin add private pvp settings for players. WorldGuard flags are supported.");
+				sender.sendMessage(ChatColor.GREEN + "This plugin add private pvp settings for players. WorldGuard flags are supported.");
+				return true;
 			}
 		}
-		return false;
+		
 	}
 
 }
