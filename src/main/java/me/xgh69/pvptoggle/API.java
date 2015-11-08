@@ -65,6 +65,11 @@ public class API
 		return plugin.getPlayersInFight();
 	}
 	
+	public String getLang()
+	{
+		return plugin.getLang();
+	}
+	
 	public int getTimeStamp()
 	{
 		int now = -1;

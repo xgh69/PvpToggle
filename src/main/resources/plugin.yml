@@ -6,3 +6,9 @@ softdepend: [WorldEdit, WorldGuard]
 commands:
   pvp:
     description: Manage your pvp settings
+  pvptoggle:
+    description: Informations
+permissions:
+  pvptoggle.admin:
+    default: op
+    description: Permission for admins.

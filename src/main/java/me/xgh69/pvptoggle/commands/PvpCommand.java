@@ -50,12 +50,6 @@ public class PvpCommand implements CommandExecutor
 					return true;
 				}
 			}
-			else if(args[0].equalsIgnoreCase("reload"))
-			{
-				plugin.reloadConfig();
-				player.sendMessage(plugin.getMessage("cmd_pvp_reload").replace("$player", player.getName()));
-				return true;
-			}
 			else
 			{
 				player.sendMessage(plugin.getMessage("cmd_pvp_usage").replace("$player", player.getName()));

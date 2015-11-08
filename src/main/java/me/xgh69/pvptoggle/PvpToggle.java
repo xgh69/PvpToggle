@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import me.xgh69.pvptoggle.commands.PvpCommand;
+import me.xgh69.pvptoggle.commands.PvpToggleCommand;
 import me.xgh69.pvptoggle.listeners.EntityListener;
 import me.xgh69.pvptoggle.listeners.PlayerListener;
 
@@ -52,6 +53,11 @@ public final class PvpToggle extends JavaPlugin
 		config = YamlConfiguration.loadConfiguration(configFile);
 	}
 	
+	public String getLang()
+	{
+		return lang;
+	}
+	
 	@Override
 	public void onEnable()
 	{
@@ -68,6 +74,7 @@ public final class PvpToggle extends JavaPlugin
 		Bukkit.getPluginManager().registerEvents(playerListener, this);
 		Bukkit.getPluginManager().registerEvents(entityListener, this);
 		getCommand("pvp").setExecutor(new PvpCommand());
+		getCommand("pvptoggle").setExecutor(new PvpToggleCommand());
 		addAllowedCommand("/pvp status");
 		addAllowedCommand("/msg");
 		if(!configFile.exists())
@@ -97,7 +104,8 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_status_enable", "&cwlaczony&b.");
 				config.addDefault("messages.cmd_pvp_status_disable", "&awylaczony&b.");
 				config.addDefault("messages.cmd_pvp_console", "&c$player nie potrafi walczyc.");
-				config.addDefault("messages.cmd_pvp_reload", "&cPrzeladowales konfiguracje.");
+				config.addDefault("messages.cmd_pvptoggle_reload", "&cPrzeladowales konfiguracje.");
+				config.addDefault("messages.cmd_pvptoggle_noperm", "&cBrak uprawnien.");
 				config.addDefault("users", "");
 				config.addDefault("users.JanKowalski", true);
 				config.options().copyDefaults(true);
@@ -128,7 +136,8 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_status_enable", "&cenabled&b.");
 				config.addDefault("messages.cmd_pvp_status_disable", "&adisabled&b.");
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
-				config.addDefault("messages.cmd_pvp_reload", "&cConfig reloaded.");
+				config.addDefault("messages.cmd_pvptoggle_reload", "&cConfig reloaded.");
+				config.addDefault("messages.cmd_pvptoggle_noperm", "&cNo permission.");
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
@@ -143,7 +152,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.first_join", "&aFight protected is enabled.");
 				config.addDefault("messages.logout_join", "&cYou are logout.");
 				config.addDefault("messages.logout_left", "&c$player logout in fight.");
-				config.addDefault("messages.logout_left_stopfight", "&aYou can logout, because your friend logout.");
+				config.addDefault("messages.logout_left_stopfight", "&aYou can logout, because your friend logout");
 				config.addDefault("messages.cuboid_pvponly_enter", "&cYou are entering on perm pvp region.");
 				config.addDefault("messages.cuboid_pvponly_exit", "&cYou are exiting from perm pvp region.");
 				config.addDefault("messages.cuboid_pvponly_cmd_block", "&cYou cannot use this command here.");
@@ -159,7 +168,8 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_status_enable", "&cenabled&b.");
 				config.addDefault("messages.cmd_pvp_status_disable", "&adisabled&b.");
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
-				config.addDefault("messages.cmd_pvp_reload", "&cConfig reloaded.");
+				config.addDefault("messages.cmd_pvptoggle_reload", "&cConfig reloaded.");
+				config.addDefault("messages.cmd_pvptoggle_noperm", "&cNo permission.");
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
