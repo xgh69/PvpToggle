@@ -17,6 +17,7 @@ public class PvpToggleCommand implements CommandExecutor
 		if(!sender.hasPermission("pvptoggle.admin"))
 		{
 			sender.sendMessage(plugin.getMessage("cmd_pvptoggle_noperm").replace("$player", sender.getName()));
+			return false;
 		}
 		
 		if(args[0].equalsIgnoreCase("reload"))
