@@ -29,8 +29,6 @@ public final class PvpToggle extends JavaPlugin
 	private String lang;
 	private EntityListener entityListener;
 	private PlayerListener playerListener;
-	
-	private static API api;
 	private static PvpToggle pvptoggle;
 	
 	public static PvpToggle getInstance()
@@ -43,7 +41,7 @@ public final class PvpToggle extends JavaPlugin
 		try {
 			config.save(configFile);
 		} catch (IOException e) {
-			getLogger().info("Blad: " + e);
+			getLogger().info("Err: " + e);
 		}
 		
 		reloadConfig();
@@ -63,7 +61,6 @@ public final class PvpToggle extends JavaPlugin
 	public void onEnable()
 	{
 		pvptoggle = this;
-		api = new API();
 		playerListener = new PlayerListener();
 		entityListener = new EntityListener();
 		lang = System.getProperty("user.language");
@@ -101,12 +98,19 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_usage", "&aPoprawne uzycie: /pvp disable | enable | status.");
 				config.addDefault("messages.cmd_pvp_enable", "&aWlaczyles ochrone przed walka.");
 				config.addDefault("messages.cmd_pvp_disable", "&cWylaczyles ochrone przed walka.");
-				config.addDefault("messages.cmd_pvp_status", "&bTwoj tryb walki jest ");
-				config.addDefault("messages.cmd_pvp_status_enable", "&cwlaczony&b.");
-				config.addDefault("messages.cmd_pvp_status_disable", "&awylaczony&b.");
+				config.addDefault("messages.cmd_pvp_status", "&bTwoja ochrona przed walka jest ");
+				config.addDefault("messages.cmd_pvp_status_enable", "&cwlaczona&b.");
+				config.addDefault("messages.cmd_pvp_status_disable", "&awylaczona&b.");
 				config.addDefault("messages.cmd_pvp_console", "&c$player nie potrafi walczyc.");
 				config.addDefault("messages.cmd_pvptoggle_reload", "&cPrzeladowales konfiguracje.");
 				config.addDefault("messages.cmd_pvptoggle_noperm", "&cBrak uprawnien.");
+				config.addDefault("messages.cmd_pvptoggle_usage", "&a/pvptoggle enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvptoggle_enable", "&aWlaczono ochrone graczowi $player");
+				config.addDefault("messages.cmd_pvptoggle_disable", "&cWylaczono ochrone graczowi $player");
+				config.addDefault("messages.cmd_pvptoggle_status", "&bOchrona gracza $player jest ");
+				config.addDefault("messages.cmd_pvptoggle_status_enable", "&awlaczona");
+				config.addDefault("messages.cmd_pvptoggle_status_disable", "&cwylaczona");
+				config.addDefault("messages.cmd_pvptoggle_offline", "&c$player jest offline.");
 				config.addDefault("users", "");
 				config.addDefault("users.JanKowalski", true);
 				config.options().copyDefaults(true);
@@ -131,14 +135,21 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.player_damager", "&cDon't logout. You hurted $player.");
 				config.addDefault("messages.player_damaged", "&cDon't logout. $player hurt you.");
 				config.addDefault("messages.cmd_pvp_usage", "&aUsage: /pvp disable | enable | status.");
-				config.addDefault("messages.cmd_pvp_enable", "&cYour fight protection is enabled.");
-				config.addDefault("messages.cmd_pvp_disable", "&cYour fight protection is disabled.");
-				config.addDefault("messages.cmd_pvp_status", "&bYour fight settings are ");
+				config.addDefault("messages.cmd_pvp_enable", "&cYour pvp protection is enabled.");
+				config.addDefault("messages.cmd_pvp_disable", "&cYour pvp protection is disabled.");
+				config.addDefault("messages.cmd_pvp_status", "&bYour pvp protection is ");
 				config.addDefault("messages.cmd_pvp_status_enable", "&cenabled&b.");
 				config.addDefault("messages.cmd_pvp_status_disable", "&adisabled&b.");
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
 				config.addDefault("messages.cmd_pvptoggle_reload", "&cConfig reloaded.");
 				config.addDefault("messages.cmd_pvptoggle_noperm", "&cNo permission.");
+				config.addDefault("messages.cmd_pvptoggle_usage", "&a/pvptoggle enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvptoggle_enable", "&aEnabled $player's pvp proection.");
+				config.addDefault("messages.cmd_pvptoggle_disable", "&cDisabled $player's pvp protection.");
+				config.addDefault("messages.cmd_pvptoggle_status", "&b$player's protection is ");
+				config.addDefault("messages.cmd_pvptoggle_status_enable", "&aenabled");
+				config.addDefault("messages.cmd_pvptoggle_status_disable", "&cdisabled");
+				config.addDefault("messages.cmd_pvptoggle_offline", "&c$player is offline.");
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
@@ -163,14 +174,21 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.player_damager", "&cDon't logout. You hurted $player.");
 				config.addDefault("messages.player_damaged", "&cDon't logout. $player hurt you.");
 				config.addDefault("messages.cmd_pvp_usage", "&aUsage: /pvp disable | enable | status.");
-				config.addDefault("messages.cmd_pvp_enable", "&cYour fight protection is enabled.");
-				config.addDefault("messages.cmd_pvp_disable", "&cYour fight protection is disabled.");
-				config.addDefault("messages.cmd_pvp_status", "&bYour fight settings are ");
+				config.addDefault("messages.cmd_pvp_enable", "&cYour pvp protection is enabled.");
+				config.addDefault("messages.cmd_pvp_disable", "&cYour pvp protection is disabled.");
+				config.addDefault("messages.cmd_pvp_status", "&bYour pvp protection is ");
 				config.addDefault("messages.cmd_pvp_status_enable", "&cenabled&b.");
 				config.addDefault("messages.cmd_pvp_status_disable", "&adisabled&b.");
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
 				config.addDefault("messages.cmd_pvptoggle_reload", "&cConfig reloaded.");
 				config.addDefault("messages.cmd_pvptoggle_noperm", "&cNo permission.");
+				config.addDefault("messages.cmd_pvptoggle_usage", "&a/pvptoggle enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvptoggle_enable", "&aEnabled $player's pvp proection.");
+				config.addDefault("messages.cmd_pvptoggle_disable", "&cDisabled $player's pvp protection.");
+				config.addDefault("messages.cmd_pvptoggle_status", "&b$player's protection is ");
+				config.addDefault("messages.cmd_pvptoggle_status_enable", "&aenabled");
+				config.addDefault("messages.cmd_pvptoggle_status_disable", "&cdisabled");
+				config.addDefault("messages.cmd_pvptoggle_offline", "&c$player is offline.");
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
@@ -186,10 +204,6 @@ public final class PvpToggle extends JavaPlugin
 		reloadConfig();
 	}
 	
-	public static API getAPI()
-	{
-		return api;
-	}
 	
 	public boolean containsPvpSettings(UUID uid)
 	{
@@ -200,6 +214,8 @@ public final class PvpToggle extends JavaPlugin
 	public boolean getPvpSettings(UUID uid)
 	{
 		reloadConfig();
+		if(!containsPvpSettings(uid))
+			return true;
 		return config.getBoolean("users." + uid.toString());
 	}
 	
