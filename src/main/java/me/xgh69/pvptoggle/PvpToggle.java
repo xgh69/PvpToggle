@@ -211,7 +211,7 @@ public final class PvpToggle extends JavaPlugin
 		return config.contains("users." + uid.toString());
 	}
 	
-	public boolean getPvpSettings(UUID uid)
+	public boolean getPvpProtection(UUID uid)
 	{
 		reloadConfig();
 		if(!containsPvpSettings(uid))
@@ -219,7 +219,7 @@ public final class PvpToggle extends JavaPlugin
 		return config.getBoolean("users." + uid.toString());
 	}
 	
-	public void setPvpSettings(UUID uid, boolean b)
+	public void setPvpProtection(UUID uid, boolean b)
 	{
 		config.set("users." + uid.toString(), b);
 		saveConfig();
@@ -257,7 +257,7 @@ public final class PvpToggle extends JavaPlugin
 		return inFight.get(playerName);
 	}
 	
-	public boolean compareFightAndCurrentTimes(String playerName)
+	public boolean isTimeOver(String playerName)
 	{
 		int i = inFight.get(playerName);
 		int j = getTimeStamp();

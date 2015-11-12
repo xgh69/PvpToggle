@@ -31,7 +31,7 @@ public class PlayerListener implements Listener
 		Player player = evt.getPlayer();
 		if(!plugin.containsPvpSettings(player.getUniqueId()))
 		{
-			plugin.setPvpSettings(player.getUniqueId(), true);
+			plugin.setPvpProtection(player.getUniqueId(), true);
 			player.sendMessage(plugin.getMessage("first_join").replace("$player", player.getName()));
 		}
 		
@@ -51,7 +51,7 @@ public class PlayerListener implements Listener
 		
 		if(plugin.isInFight(player.getName()))
 		{
-			if(plugin.compareFightAndCurrentTimes(player.getName()))
+			if(plugin.isTimeOver(player.getName()))
 			{
 				plugin.setInFight(player.getName(), false);
 				player.sendMessage(plugin.getMessage("stopfight").replace("$player", player.getName()));
@@ -85,7 +85,7 @@ public class PlayerListener implements Listener
 		Player player = evt.getPlayer();
 		if(plugin.isInFight(player.getName()))
 		{
-			if(plugin.compareFightAndCurrentTimes(player.getName()))
+			if(plugin.isTimeOver(player.getName()))
 			{
 				plugin.setInFight(player.getName(), false);
 			}
