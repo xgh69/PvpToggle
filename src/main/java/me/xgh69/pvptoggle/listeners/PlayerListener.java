@@ -3,6 +3,7 @@ package me.xgh69.pvptoggle.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
 
 import org.bukkit.Bukkit;
@@ -24,21 +25,22 @@ public class PlayerListener implements Listener
 {
 	private List<String> inPvp = new ArrayList<String>();
 	private PvpToggle plugin = PvpToggle.getInstance();
+	private PvpManager pvpmanager = plugin.getPvpManager();
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent evt)
 	{
 		Player player = evt.getPlayer();
-		if(!plugin.containsPvpSettings(player.getUniqueId()))
+		if(!pvpmanager.containsPvpSettings(player.getUniqueId()))
 		{
-			plugin.setPvpProtection(player.getUniqueId(), true);
+			pvpmanager.setPvpProtection(player.getUniqueId(), true);
 			player.sendMessage(plugin.getMessage("first_join").replace("$player", player.getName()));
 		}
 		
-		if(plugin.isInFight(player.getName()))
+		if(pvpmanager.isInFight(player.getName()))
 		{
 			player.sendMessage(plugin.getMessage("logout_join").replace("$player", player.getName()));
-			plugin.setInFight(player.getName(), false);
+			pvpmanager.setInFight(player.getName(), false);
 		}
 	}
 	
@@ -47,13 +49,12 @@ public class PlayerListener implements Listener
 	public void onMove(PlayerMoveEvent evt)
 	{
 		Player player = evt.getPlayer();
-		PvpToggle plugin = PvpToggle.getInstance();
 		
-		if(plugin.isInFight(player.getName()))
+		if(pvpmanager.isInFight(player.getName()))
 		{
-			if(plugin.isTimeOver(player.getName()))
+			if(pvpmanager.isTimeOver(player.getName()))
 			{
-				plugin.setInFight(player.getName(), false);
+				pvpmanager.setInFight(player.getName(), false);
 				player.sendMessage(plugin.getMessage("stopfight").replace("$player", player.getName()));
 			}
 		}
@@ -83,15 +84,15 @@ public class PlayerListener implements Listener
 	public void onCommand(PlayerCommandPreprocessEvent evt)
 	{
 		Player player = evt.getPlayer();
-		if(plugin.isInFight(player.getName()))
+		if(pvpmanager.isInFight(player.getName()))
 		{
-			if(plugin.isTimeOver(player.getName()))
+			if(pvpmanager.isTimeOver(player.getName()))
 			{
-				plugin.setInFight(player.getName(), false);
+				pvpmanager.setInFight(player.getName(), false);
 			}
 			else
 			{
-				if(!plugin.isAllowedCommand(evt.getMessage()))
+				if(!pvpmanager.isAllowedCommand(evt.getMessage()))
 				{
 					player.sendMessage(plugin.getMessage("cmd_infight").replace("$player", player.getName()));
 					evt.setCancelled(true);
@@ -123,18 +124,18 @@ public class PlayerListener implements Listener
 		Player player = evt.getPlayer();
 		PvpToggle plugin = PvpToggle.getInstance();
 		
-		if(plugin.isInFight(player.getName()))
+		if(pvpmanager.isInFight(player.getName()))
 		{
-			int i = plugin.getFightTime(player.getName());
+			int i = pvpmanager.getFightTime(player.getName());
 			Bukkit.broadcastMessage(plugin.getMessage("logout_left").replace("$player", player.getName()));
 			player.setHealth(0.00D);
 			
-			for(Object o : plugin.getPlayersInFight())
+			for(Object o : pvpmanager.getPlayersInFight())
 			{
 				String key = (String) o;
-				if(plugin.getFightTime(key) == i)
+				if(pvpmanager.getFightTime(key) == i)
 				{
-					plugin.setInFight(key, false);
+					pvpmanager.setInFight(key, false);
 					Player target = Bukkit.getPlayer(key);
 					target.sendMessage(plugin.getMessage("logout_left_stopfight").replace("$player", target.getName()));
 					break;

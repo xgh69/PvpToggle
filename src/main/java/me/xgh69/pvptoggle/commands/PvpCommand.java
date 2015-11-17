@@ -1,5 +1,6 @@
 package me.xgh69.pvptoggle.commands;
 
+import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
 
 import org.bukkit.ChatColor;
@@ -14,6 +15,7 @@ public class PvpCommand implements CommandExecutor
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args)
 	{
 		PvpToggle plugin = PvpToggle.getInstance();
+		PvpManager pvpmanager = plugin.getPvpManager();
 		
 		if(!(sender instanceof Player))
 		{
@@ -27,24 +29,24 @@ public class PvpCommand implements CommandExecutor
 		{	
 			if(args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("on"))
 			{
-				plugin.setPvpProtection(player.getUniqueId(), true);
+				pvpmanager.setPvpProtection(player.getUniqueId(), true);
 				player.sendMessage(plugin.getMessage("cmd_pvp_enable").replace("$player", player.getName()));
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("off"))
 			{
-				plugin.setPvpProtection(player.getUniqueId(), false);
+				pvpmanager.setPvpProtection(player.getUniqueId(), false);
 				player.sendMessage(plugin.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("status"))
 			{
-				if(plugin.getPvpProtection(player.getUniqueId()))
+				if(pvpmanager.getPvpProtection(player.getUniqueId()))
 				{
 					player.sendMessage(plugin.getMessage("cmd_pvp_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvp_status_enable"));
 					return true;
 				}
-				else if(!plugin.getPvpProtection(player.getUniqueId()))
+				else if(!pvpmanager.getPvpProtection(player.getUniqueId()))
 				{
 					player.sendMessage(plugin.getMessage("cmd_pvp_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvp_status_disable"));
 					return true;
