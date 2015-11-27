@@ -115,6 +115,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&awlaczona");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cwylaczona");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player jest offline.");
+				config.addDefault("settings.first_join_pvp_protection", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JanKowalski", true);
 				config.options().copyDefaults(true);
@@ -154,6 +155,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&aenabled");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
+				config.addDefault("settings.first_join_pvp_protection", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
@@ -193,6 +195,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&aenabled");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
+				config.addDefault("settings.first_join_pvp_protection", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
@@ -212,6 +215,11 @@ public final class PvpToggle extends JavaPlugin
 	public String getMessage(String msg)
 	{
 		return config.getString("messages." + msg).replace("&", "§");
+	}
+	
+	public boolean getSettings(String key)
+	{
+		return config.getBoolean("settings." + key);
 	}
 
 }
