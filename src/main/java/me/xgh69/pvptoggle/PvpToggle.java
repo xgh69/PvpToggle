@@ -17,10 +17,13 @@ public final class PvpToggle extends JavaPlugin
 	private File configFile;
 	private YamlConfiguration config;
 	private String lang;
+	private EntityListener entityListener;
+	private PlayerListener playerListener;
 	private static PvpToggle pvptoggle;
 	private static PvpManager pvpmanager;
 	
 	public static final String NAME = "PvpToggle";
+	public static final String VERSION = "1.1-SNAPSHOT";
 	
 	
 	public static PvpToggle getInstance()
@@ -63,33 +66,27 @@ public final class PvpToggle extends JavaPlugin
 	public void onEnable()
 	{
 		pvptoggle = this;
-
-		//Start listeners
-		Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-		Bukkit.getPluginManager().registerEvents(new EntityListener(), this);
-
+		playerListener = new PlayerListener();
+		entityListener = new EntityListener();
+		lang = System.getProperty("user.language");
+		configFile = new File("plugins" + File.separator + NAME + File.separator + "config.yml");
+		config = YamlConfiguration.loadConfiguration(configFile);
 		pvpmanager = new PvpManager();
-
+		
+		Bukkit.getPluginManager().registerEvents(playerListener, this);
+		Bukkit.getPluginManager().registerEvents(entityListener, this);
 		getCommand("pvp").setExecutor(new PvpCommand());
 		getCommand("pvpadmin").setExecutor(new PvpAdminCommand());
 		pvpmanager.addAllowedCommand("/pvp status");
 		pvpmanager.addAllowedCommand("/msg");
-
-		//Config
-		lang = System.getProperty("user.language");
-		configFile = new File("plugins" + File.separator + NAME + File.separator + "config.yml");
-		config = YamlConfiguration.loadConfiguration(configFile);
-
 		if(!configFile.exists())
 		{
 			getLogger().info("Config file not found: " + configFile.getPath());
-			getLogger().info("Your language detected is: " + lang);
-			getLogger().info("Your language is supported.");
-
-			config.addDefault("messages", "");
-
 			if(lang.equalsIgnoreCase("pl"))
 			{
+				getLogger().info("Your language detected is: " + lang);
+				getLogger().info("Your language is supported.");
+				config.addDefault("messages", "");
 				config.addDefault("messages.first_join", "&aOchrona przed walka zostala wlaczona.");
 				config.addDefault("messages.logout_join", "&cWylogowales sie podczas walki.");
 				config.addDefault("messages.logout_left", "&c$player wylogowal sie podczas walki.");
@@ -118,9 +115,18 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&awlaczona");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cwylaczona");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player jest offline.");
+				config.addDefault("settings.first_join_pvp_protection", true);
+				config.addDefault("users", "");
+				config.addDefault("users.JanKowalski", true);
+				config.options().copyDefaults(true);
+				
+				saveConfig();
 			}
-			else
+			else if(lang.equalsIgnoreCase("en"))
 			{
+				getLogger().info("Your language detected is: " + lang);
+				getLogger().info("Your language is supported.");
+				config.addDefault("messages", "");
 				config.addDefault("messages.first_join", "&aFight protected is enabled.");
 				config.addDefault("messages.logout_join", "&cYou are logout.");
 				config.addDefault("messages.logout_left", "&c$player logout in fight.");
@@ -149,14 +155,53 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&aenabled");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
+				config.addDefault("settings.first_join_pvp_protection", true);
+				config.addDefault("users", "");
+				config.addDefault("users.JohnDoo", true);
+				config.options().copyDefaults(true);
+				
+				saveConfig();
 			}
-
-			config.addDefault("settings.first_join_pvp_protection", true);
-			config.addDefault("users", "");
-			config.addDefault("users.JohnDoo", true);
-			config.options().copyDefaults(true);
-
-			saveConfig();
+			else
+			{
+				getLogger().info("Your language detected is: " + lang);
+				getLogger().info("Your language is not supported and using English.");
+				config.addDefault("messages", "");
+				config.addDefault("messages.first_join", "&aFight protected is enabled.");
+				config.addDefault("messages.logout_join", "&cYou are logout.");
+				config.addDefault("messages.logout_left", "&c$player logout in fight.");
+				config.addDefault("messages.logout_left_stopfight", "&aYou can logout, because your friend logout");
+				config.addDefault("messages.cuboid_pvponly_enter", "&cYou are entering on perm pvp region.");
+				config.addDefault("messages.cuboid_pvponly_exit", "&cYou are exiting from perm pvp region.");
+				config.addDefault("messages.cuboid_pvponly_cmd_block", "&cYou cannot use this command here.");
+				config.addDefault("messages.stopfight", "&aYou can logout now.");
+				config.addDefault("messages.cmd_infight", "&cPlease wait 2 minutes after fight.");
+				config.addDefault("messages.player_protected", "&c$player is protected.");
+				config.addDefault("messages.player_damager", "&cDon't logout. You hurted $player.");
+				config.addDefault("messages.player_damaged", "&cDon't logout. $player hurt you.");
+				config.addDefault("messages.cmd_pvp_usage", "&aUsage: /pvp disable | enable | status.");
+				config.addDefault("messages.cmd_pvp_enable", "&cYour pvp protection is enabled.");
+				config.addDefault("messages.cmd_pvp_disable", "&cYour pvp protection is disabled.");
+				config.addDefault("messages.cmd_pvp_status", "&bYour pvp protection is ");
+				config.addDefault("messages.cmd_pvp_status_enable", "&cenabled&b.");
+				config.addDefault("messages.cmd_pvp_status_disable", "&adisabled&b.");
+				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
+				config.addDefault("messages.cmd_pvpadmin_reload", "&cConfig reloaded.");
+				config.addDefault("messages.cmd_pvpadmin_noperm", "&cNo permission.");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&a/pvptoggle enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvpadmin_enable", "&aEnabled $player's pvp proection.");
+				config.addDefault("messages.cmd_pvpadmin_disable", "&cDisabled $player's pvp protection.");
+				config.addDefault("messages.cmd_pvpadmin_status", "&b$player's protection is ");
+				config.addDefault("messages.cmd_pvpadmin_status_enable", "&aenabled");
+				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
+				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
+				config.addDefault("settings.first_join_pvp_protection", true);
+				config.addDefault("users", "");
+				config.addDefault("users.JohnDoo", true);
+				config.options().copyDefaults(true);
+				
+				saveConfig();
+			}
 		}
 		else
 		{

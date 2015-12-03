@@ -3,10 +3,12 @@ package me.xgh69.pvptoggle.commands;
 import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("unused")
 public class PvpCommand implements CommandExecutor
 {	
 	@Override
@@ -18,44 +20,51 @@ public class PvpCommand implements CommandExecutor
 		if(!(sender instanceof Player))
 		{
 			sender.sendMessage(plugin.getMessage("cmd_pvp_console").replace("$player", sender.getName()));
-			return true;
+			return false;
 		}
 		
 		Player player = (Player) sender;
 		
-		if(args.length != 1)
-		{
-			player.sendMessage(plugin.getMessage("cmd_pvp_usage").replace("$player", player.getName()));
-			return true;
-		}
-
-		switch(args[0].toLowerCase())
-		{
-			case "enable":
-			case "on":
+		if(args.length == 1)
+		{	
+			if(args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("on"))
+			{
 				pvpmanager.setPvpProtection(player.getUniqueId(), true);
 				player.sendMessage(plugin.getMessage("cmd_pvp_enable").replace("$player", player.getName()));
-				break;
-			case "disable":
-			case "off":
+				return true;
+			}
+			else if(args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("off"))
+			{
 				pvpmanager.setPvpProtection(player.getUniqueId(), false);
 				player.sendMessage(plugin.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
-				break;
-			case "status":
+				return true;
+			}
+			else if(args[0].equalsIgnoreCase("status"))
+			{
 				if(pvpmanager.getPvpProtection(player.getUniqueId()))
 				{
 					player.sendMessage(plugin.getMessage("cmd_pvp_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvp_status_enable"));
+					return true;
 				}
 				else if(!pvpmanager.getPvpProtection(player.getUniqueId()))
 				{
 					player.sendMessage(plugin.getMessage("cmd_pvp_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvp_status_disable"));
+					return true;
 				}
-				break;
-			default:
+			}
+			else
+			{
 				player.sendMessage(plugin.getMessage("cmd_pvp_usage").replace("$player", player.getName()));
-				break;
+				return false;
+			}
 		}
-
-		return true;
+		else
+		{
+			player.sendMessage(plugin.getMessage("cmd_pvp_usage").replace("$player", player.getName()));
+			return false;
+		}
+		
+		return false;
 	}
+	
 }
