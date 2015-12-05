@@ -84,10 +84,9 @@ public class PvpManager
 	
 	private int getTimeStamp()
 	{
-		Date date = new Date();
-		int now = Integer.parseInt((new SimpleDateFormat("HH")).format(date)) * 60 * 60;
-		now += Integer.parseInt((new SimpleDateFormat("mm")).format(date)) * 60;
-		now += Integer.parseInt((new SimpleDateFormat("ss")).format(date));
+		int now = Integer.parseInt((new SimpleDateFormat("HH")).format(new Date())) * 60 * 60;
+		now += Integer.parseInt((new SimpleDateFormat("mm")).format(new Date())) * 60;
+		now += Integer.parseInt((new SimpleDateFormat("ss")).format(new Date()));
 		
 		return now;
 	}

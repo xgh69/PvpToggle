@@ -1,6 +1,6 @@
 name: PvpToggle
 main: me.xgh69.pvptoggle.PvpToggle
-version: 1.2
+version: 1.1-SNAPSHOT
 author: xgh69
 softdepend: [WorldEdit, WorldGuard]
 commands:
