@@ -32,6 +32,11 @@ public class EntityListener implements Listener
 		
 		if(set.getFlag(DefaultFlag.PVP) != State.ALLOW)
 		{
+			if(set.getFlag(DefaultFlag.PVP) == State.DENY)
+			{
+				evt.setCancelled(true);
+				return;
+			}
 			if(pvpmanager.getPvpProtection(victim.getUniqueId()) || pvpmanager.getPvpProtection(damager.getUniqueId()))
 			{
 				damager.sendMessage(plugin.getMessage("player_protected").replace("$player", victim.getName()));

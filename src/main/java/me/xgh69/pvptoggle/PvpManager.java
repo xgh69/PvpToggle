@@ -11,10 +11,16 @@ import java.util.UUID;
 
 public class PvpManager
 {
-	private Map<String, Integer> inFight = new HashMap<String, Integer>();
-	private List<String> allowedCommands = new ArrayList<String>();
+	private Map<String, Integer> inFight;
+	private List<String> allowedCommands;
 	
 	private PvpToggle plugin = PvpToggle.getInstance();
+	
+	public PvpManager()
+	{
+		inFight = new HashMap<String, Integer>();
+		allowedCommands = new ArrayList<String>();
+	}
 	
 	public boolean containsPvpSettings(UUID uid)
 	{
@@ -84,9 +90,10 @@ public class PvpManager
 	
 	private int getTimeStamp()
 	{
-		int now = Integer.parseInt((new SimpleDateFormat("HH")).format(new Date())) * 60 * 60;
-		now += Integer.parseInt((new SimpleDateFormat("mm")).format(new Date())) * 60;
-		now += Integer.parseInt((new SimpleDateFormat("ss")).format(new Date()));
+		Date date = new Date();
+		int now = Integer.parseInt((new SimpleDateFormat("HH")).format(date)) * 60 * 60;
+		now += Integer.parseInt((new SimpleDateFormat("mm")).format(date)) * 60;
+		now += Integer.parseInt((new SimpleDateFormat("ss")).format(date));
 		
 		return now;
 	}

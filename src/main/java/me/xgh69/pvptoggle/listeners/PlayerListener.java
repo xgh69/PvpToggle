@@ -33,7 +33,8 @@ public class PlayerListener implements Listener
 		Player player = evt.getPlayer();
 		if(!pvpmanager.containsPvpSettings(player.getUniqueId()))
 		{
-			pvpmanager.setPvpProtection(player.getUniqueId(), true);
+			boolean pvp = plugin.getSettings("first_join_pvp_protection");
+			pvpmanager.setPvpProtection(player.getUniqueId(), pvp);
 			player.sendMessage(plugin.getMessage("first_join").replace("$player", player.getName()));
 		}
 		
