@@ -1,6 +1,5 @@
 package me.xgh69.pvptoggle.commands;
 
-import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
 
 import org.bukkit.Bukkit;
@@ -17,9 +16,7 @@ public class PvpAdminCommand implements CommandExecutor
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		
 		PvpToggle plugin = PvpToggle.getInstance();
-		PvpManager pvpmanager = plugin.getPvpManager();
 		
 		if(!sender.hasPermission("pvptoggle.admin"))
 		{
@@ -65,7 +62,7 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					pvpmanager.setPvpProtection(player.getUniqueId(), true);
+					plugin.setPvpSettings(player.getUniqueId(), true);
 					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_enable").replace("$player", player.getName()));
 					return true;
 				}
@@ -81,7 +78,7 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					pvpmanager.setPvpProtection(player.getUniqueId(), false);
+					plugin.setPvpSettings(player.getUniqueId(), false);
 					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_disable").replace("$player", player.getName()));
 					return true;
 				}
@@ -97,12 +94,12 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					if(pvpmanager.getPvpProtection(player.getUniqueId()))
+					if(plugin.getPvpSettings(player.getUniqueId()))
 					{
 						sender.sendMessage(plugin.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvpadmin_status_enable"));
 						return true;
 					}
-					else if(!pvpmanager.getPvpProtection(player.getUniqueId()))
+					else if(!plugin.getPvpSettings(player.getUniqueId()))
 					{
 						sender.sendMessage(plugin.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvpadmin_status_disable"));
 						return true;					

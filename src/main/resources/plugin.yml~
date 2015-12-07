@@ -1,0 +1,14 @@
+name: PvpToggle
+main: me.xgh69.pvptoggle.PvpToggle
+version: 1.1
+author: xgh69
+softdepend: [WorldEdit, WorldGuard]
+commands:
+  pvp:
+    description: Manage your pvp settings
+  pvptoggle:
+    description: PvpToggle admin command
+permissions:
+  pvptoggle.admin:
+    default: op
+    description: Permission for admins.

@@ -1,6 +1,5 @@
 package me.xgh69.pvptoggle.listeners;
 
-import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
 
 import org.bukkit.entity.Player;
@@ -26,7 +25,6 @@ public class EntityListener implements Listener
 		final Player victim = (Player) evt.getEntity();
 		final Player damager = (Player) evt.getDamager();
 		PvpToggle plugin = PvpToggle.getInstance();
-		PvpManager pvpmanager = plugin.getPvpManager();
 		RegionManager rm = WorldGuardPlugin.inst().getRegionManager(damager.getWorld());
 		ApplicableRegionSet set = rm.getApplicableRegions(victim.getLocation());
 		
@@ -37,7 +35,8 @@ public class EntityListener implements Listener
 				evt.setCancelled(true);
 				return;
 			}
-			if(pvpmanager.getPvpProtection(victim.getUniqueId()) || pvpmanager.getPvpProtection(damager.getUniqueId()))
+			
+			if(plugin.getPvpSettings(victim.getUniqueId()) || plugin.getPvpSettings(damager.getUniqueId()))
 			{
 				damager.sendMessage(plugin.getMessage("player_protected").replace("$player", victim.getName()));
 				evt.setCancelled(true);
@@ -46,26 +45,26 @@ public class EntityListener implements Listener
 			else
 			{
 				evt.setCancelled(false);
-				if(!pvpmanager.isInFight(victim.getName()))
+				if(!plugin.isInFight(victim.getName()))
 					victim.sendMessage(plugin.getMessage("player_damaged").replace("$player", damager.getName()));
-				if(!pvpmanager.isInFight(damager.getName()))
+				if(!plugin.isInFight(damager.getName()))
 					damager.sendMessage(plugin.getMessage("player_damager").replace("$player", victim.getName()));
-				pvpmanager.setInFight(victim.getName(), true);
-				pvpmanager.setInFight(damager.getName(), true);
+				plugin.setInFight(victim.getName(), true);
+				plugin.setInFight(damager.getName(), true);
 				return;
 			}
 		}
 		else if(set.getFlag(DefaultFlag.PVP) == State.ALLOW)
 		{
 			evt.setCancelled(false);
-			if(!pvpmanager.isInFight(victim.getName()))
+			if(!plugin.isInFight(victim.getName()))
 				victim.sendMessage(plugin.getMessage("player_damaged").replace("$player", damager.getName()));
 			
-			if(!pvpmanager.isInFight(damager.getName()))
+			if(!plugin.isInFight(damager.getName()))
 				damager.sendMessage(plugin.getMessage("player_damager").replace("$player", victim.getName()));
 			
-			pvpmanager.setInFight(victim.getName(), true);
-			pvpmanager.setInFight(damager.getName(), true);
+			plugin.setInFight(victim.getName(), true);
+			plugin.setInFight(damager.getName(), true);
 			return;
 		}
 	}

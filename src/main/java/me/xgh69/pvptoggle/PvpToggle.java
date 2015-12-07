@@ -2,9 +2,17 @@ package me.xgh69.pvptoggle;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import me.xgh69.pvptoggle.commands.PvpAdminCommand;
 import me.xgh69.pvptoggle.commands.PvpCommand;
+import me.xgh69.pvptoggle.commands.PvpAdminCommand;
 import me.xgh69.pvptoggle.listeners.EntityListener;
 import me.xgh69.pvptoggle.listeners.PlayerListener;
 
@@ -16,29 +24,19 @@ public final class PvpToggle extends JavaPlugin
 {
 	private File configFile;
 	private YamlConfiguration config;
+	private Map<String, Integer> inFight;
+	private List<String> allowedCommands;
 	private String lang;
 	private EntityListener entityListener;
 	private PlayerListener playerListener;
 	private static PvpToggle pvptoggle;
-	private static PvpManager pvpmanager;
 	
 	public static final String NAME = "PvpToggle";
 	public static final String VERSION = "1.2";
 	
-	
 	public static PvpToggle getInstance()
 	{
 		return pvptoggle;
-	}
-	
-	public PvpManager getPvpManager()
-	{
-		return pvpmanager;
-	}
-	
-	public YamlConfiguration getConfig()
-	{
-		return config;
 	}
 	
 	public void saveConfig()
@@ -69,16 +67,17 @@ public final class PvpToggle extends JavaPlugin
 		playerListener = new PlayerListener();
 		entityListener = new EntityListener();
 		lang = System.getProperty("user.language");
+		allowedCommands = new ArrayList<String>();
+		inFight = new HashMap<String, Integer>();
 		configFile = new File("plugins" + File.separator + NAME + File.separator + "config.yml");
 		config = YamlConfiguration.loadConfiguration(configFile);
-		pvpmanager = new PvpManager();
 		
 		Bukkit.getPluginManager().registerEvents(playerListener, this);
 		Bukkit.getPluginManager().registerEvents(entityListener, this);
 		getCommand("pvp").setExecutor(new PvpCommand());
 		getCommand("pvpadmin").setExecutor(new PvpAdminCommand());
-		pvpmanager.addAllowedCommand("/pvp status");
-		pvpmanager.addAllowedCommand("/msg");
+		addAllowedCommand("/pvp status");
+		addAllowedCommand("/msg");
 		if(!configFile.exists())
 		{
 			getLogger().info("Config file not found: " + configFile.getPath());
@@ -108,7 +107,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_console", "&c$player nie potrafi walczyc.");
 				config.addDefault("messages.cmd_pvpadmin_reload", "&cPrzeladowales konfiguracje.");
 				config.addDefault("messages.cmd_pvpadmin_noperm", "&cBrak uprawnien.");
-				config.addDefault("messages.cmd_pvpadmin_usage", "&a/pvptoggle enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&a/pvpadmin enable <name> | disable <name> | status <name> | info");
 				config.addDefault("messages.cmd_pvpadmin_enable", "&aWlaczono ochrone graczowi $player");
 				config.addDefault("messages.cmd_pvpadmin_disable", "&cWylaczono ochrone graczowi $player");
 				config.addDefault("messages.cmd_pvpadmin_status", "&bOchrona gracza $player jest ");
@@ -118,6 +117,8 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("users", "");
 				config.addDefault("users.JanKowalski", true);
 				config.options().copyDefaults(true);
+				
+				saveConfig();
 			}
 			else if(lang.equalsIgnoreCase("en"))
 			{
@@ -145,7 +146,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
 				config.addDefault("messages.cmd_pvpadmin_reload", "&cConfig reloaded.");
 				config.addDefault("messages.cmd_pvpadmin_noperm", "&cNo permission.");
-				config.addDefault("messages.cmd_pvpadmin_usage", "&a/pvptoggle enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&a/pvpadmin enable <name> | disable <name> | status <name> | info");
 				config.addDefault("messages.cmd_pvpadmin_enable", "&aEnabled $player's pvp proection.");
 				config.addDefault("messages.cmd_pvpadmin_disable", "&cDisabled $player's pvp protection.");
 				config.addDefault("messages.cmd_pvpadmin_status", "&b$player's protection is ");
@@ -155,6 +156,8 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
+				
+				saveConfig();
 			}
 			else
 			{
@@ -192,9 +195,9 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
+				
+				saveConfig();
 			}
-			config.addDefault("settings.first_join_pvp_protection", true);
-			saveConfig();
 		}
 		else
 		{
@@ -205,14 +208,84 @@ public final class PvpToggle extends JavaPlugin
 	}
 	
 	
+	public boolean containsPvpSettings(UUID uid)
+	{
+		reloadConfig();
+		return config.contains("users." + uid.toString());
+	}
+	
+	public boolean getPvpSettings(UUID uid)
+	{
+		reloadConfig();
+		if(!containsPvpSettings(uid))
+			return true;
+		return config.getBoolean("users." + uid.toString());
+	}
+	
+	public void setPvpSettings(UUID uid, boolean b)
+	{
+		config.set("users." + uid.toString(), b);
+		saveConfig();
+	}
+	
+	public boolean isAllowedCommand(String commandName)
+	{
+		return allowedCommands.contains(commandName);
+	}
+	
+	public void addAllowedCommand(String commandName)
+	{
+		allowedCommands.add(commandName);
+	}
+	
+	public void setInFight(String playerName, boolean fight)
+	{
+		if(fight && !inFight.containsKey(playerName))
+		{
+			inFight.put(playerName, getTimeStamp());
+		}
+		else if(!fight && inFight.containsKey(playerName))
+		{
+			inFight.remove(playerName);
+		}
+	}
+	
+	public boolean isInFight(String playerName)
+	{
+		return inFight.containsKey(playerName);
+	}
+	
+	public int getFightTime(String playerName)
+	{
+		return inFight.get(playerName);
+	}
+	
+	public boolean compareFightAndCurrentTimes(String playerName)
+	{
+		int i = inFight.get(playerName);
+		int j = getTimeStamp();
+		if(i + 2*60 == j || i + 2*60 < j)
+			return true;
+		return false;
+	}
+	
+	public List<Object> getPlayersInFight()
+	{
+		return Arrays.asList(inFight.keySet().toArray());
+	}
+	
 	public String getMessage(String msg)
 	{
 		return config.getString("messages." + msg).replace("&", "§");
 	}
 	
-	public boolean getSettings(String key)
+	private int getTimeStamp()
 	{
-		return config.getBoolean("settings." + key);
+		int now = Integer.parseInt((new SimpleDateFormat("HH")).format(new Date())) * 60 * 60;
+		now += Integer.parseInt((new SimpleDateFormat("mm")).format(new Date())) * 60;
+		now += Integer.parseInt((new SimpleDateFormat("ss")).format(new Date()));
+		
+		return now;
 	}
 
 }
