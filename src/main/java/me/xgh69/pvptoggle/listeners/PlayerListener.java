@@ -38,7 +38,7 @@ public class PlayerListener implements Listener
 		if(plugin.isInFight(player.getName()))
 		{
 			player.sendMessage(plugin.getMessage("logout_join").replace("$player", player.getName()));
-			plugin.setInFight(player.getName(), false);
+			plugin.setInFight(player.getName(), false, -1);
 		}
 	}
 	
@@ -52,7 +52,7 @@ public class PlayerListener implements Listener
 		{
 			if(plugin.compareFightAndCurrentTimes(player.getName()))
 			{
-				plugin.setInFight(player.getName(), false);
+				plugin.setInFight(player.getName(), false, -1);
 				player.sendMessage(plugin.getMessage("stopfight").replace("$player", player.getName()));
 			}
 		}
@@ -86,7 +86,7 @@ public class PlayerListener implements Listener
 		{
 			if(plugin.compareFightAndCurrentTimes(player.getName()))
 			{
-				plugin.setInFight(player.getName(), false);
+				plugin.setInFight(player.getName(), false, -1);
 			}
 			else
 			{
@@ -133,7 +133,7 @@ public class PlayerListener implements Listener
 				String key = (String) o;
 				if(plugin.getFightTime(key) == i)
 				{
-					plugin.setInFight(key, false);
+					plugin.setInFight(key, false, -1);
 					Player target = Bukkit.getPlayer(key);
 					target.sendMessage(plugin.getMessage("logout_left_stopfight").replace("$player", target.getName()));
 					break;

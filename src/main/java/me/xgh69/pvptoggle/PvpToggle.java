@@ -39,6 +39,11 @@ public final class PvpToggle extends JavaPlugin
 		return pvptoggle;
 	}
 	
+	public static void log(String s)
+	{
+		pvptoggle.getLogger().info(s);
+	}
+	
 	public void saveConfig()
 	{
 		try {
@@ -207,7 +212,6 @@ public final class PvpToggle extends JavaPlugin
 		reloadConfig();
 	}
 	
-	
 	public boolean containsPvpSettings(UUID uid)
 	{
 		reloadConfig();
@@ -238,11 +242,13 @@ public final class PvpToggle extends JavaPlugin
 		allowedCommands.add(commandName);
 	}
 	
-	public void setInFight(String playerName, boolean fight)
+	public void setInFight(String playerName, boolean fight, int time)
 	{
+		if(time == -1 && fight)
+			time = getTimeStamp();
 		if(fight && !inFight.containsKey(playerName))
 		{
-			inFight.put(playerName, getTimeStamp());
+			inFight.put(playerName, time);
 		}
 		else if(!fight && inFight.containsKey(playerName))
 		{
@@ -279,7 +285,7 @@ public final class PvpToggle extends JavaPlugin
 		return config.getString("messages." + msg).replace("&", "§");
 	}
 	
-	private int getTimeStamp()
+	public int getTimeStamp()
 	{
 		int now = Integer.parseInt((new SimpleDateFormat("HH")).format(new Date())) * 60 * 60;
 		now += Integer.parseInt((new SimpleDateFormat("mm")).format(new Date())) * 60;

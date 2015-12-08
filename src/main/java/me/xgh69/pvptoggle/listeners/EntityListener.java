@@ -47,10 +47,16 @@ public class EntityListener implements Listener
 				evt.setCancelled(false);
 				if(!plugin.isInFight(victim.getName()))
 					victim.sendMessage(plugin.getMessage("player_damaged").replace("$player", damager.getName()));
+				
 				if(!plugin.isInFight(damager.getName()))
 					damager.sendMessage(plugin.getMessage("player_damager").replace("$player", victim.getName()));
-				plugin.setInFight(victim.getName(), true);
-				plugin.setInFight(damager.getName(), true);
+				
+				if(!plugin.isInFight(victim.getName()) && !plugin.isInFight(damager.getName()))
+				{
+					int time = plugin.getTimeStamp();
+					plugin.setInFight(victim.getName(), true, time);
+					plugin.setInFight(damager.getName(), true, time);
+				}
 				return;
 			}
 		}
@@ -63,8 +69,12 @@ public class EntityListener implements Listener
 			if(!plugin.isInFight(damager.getName()))
 				damager.sendMessage(plugin.getMessage("player_damager").replace("$player", victim.getName()));
 			
-			plugin.setInFight(victim.getName(), true);
-			plugin.setInFight(damager.getName(), true);
+			if(!plugin.isInFight(victim.getName()) && !plugin.isInFight(damager.getName()))
+			{
+				int time = plugin.getTimeStamp();
+				plugin.setInFight(victim.getName(), true, time);
+				plugin.setInFight(damager.getName(), true, time);
+			}
 			return;
 		}
 	}
