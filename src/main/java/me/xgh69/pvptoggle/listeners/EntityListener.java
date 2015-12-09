@@ -36,7 +36,7 @@ public class EntityListener implements Listener
 				return;
 			}
 			
-			if(plugin.getPvpSettings(victim.getUniqueId()) || plugin.getPvpSettings(damager.getUniqueId()))
+			if(plugin.getPvp(victim.getUniqueId()) || plugin.getPvp(damager.getUniqueId()))
 			{
 				damager.sendMessage(plugin.getMessage("player_protected").replace("$player", victim.getName()));
 				evt.setCancelled(true);
@@ -45,17 +45,17 @@ public class EntityListener implements Listener
 			else
 			{
 				evt.setCancelled(false);
-				if(!plugin.isInFight(victim.getName()))
+				if(!plugin.isFight(victim.getName()))
 					victim.sendMessage(plugin.getMessage("player_damaged").replace("$player", damager.getName()));
 				
-				if(!plugin.isInFight(damager.getName()))
+				if(!plugin.isFight(damager.getName()))
 					damager.sendMessage(plugin.getMessage("player_damager").replace("$player", victim.getName()));
 				
-				if(!plugin.isInFight(victim.getName()) && !plugin.isInFight(damager.getName()))
+				if(!plugin.isFight(victim.getName()) && !plugin.isFight(damager.getName()))
 				{
-					int time = plugin.getTimeStamp();
-					plugin.setInFight(victim.getName(), true, time);
-					plugin.setInFight(damager.getName(), true, time);
+					long time = plugin.getTimeStamp();
+					plugin.setFight(victim.getName(), true, time);
+					plugin.setFight(damager.getName(), true, time);
 				}
 				return;
 			}
@@ -63,18 +63,14 @@ public class EntityListener implements Listener
 		else if(set.getFlag(DefaultFlag.PVP) == State.ALLOW)
 		{
 			evt.setCancelled(false);
-			if(!plugin.isInFight(victim.getName()))
+			if(!plugin.isFight(victim.getName()))
 				victim.sendMessage(plugin.getMessage("player_damaged").replace("$player", damager.getName()));
 			
-			if(!plugin.isInFight(damager.getName()))
+			if(!plugin.isFight(damager.getName()))
 				damager.sendMessage(plugin.getMessage("player_damager").replace("$player", victim.getName()));
-			
-			if(!plugin.isInFight(victim.getName()) && !plugin.isInFight(damager.getName()))
-			{
-				int time = plugin.getTimeStamp();
-				plugin.setInFight(victim.getName(), true, time);
-				plugin.setInFight(damager.getName(), true, time);
-			}
+			long time = plugin.getTimeStamp();
+			plugin.setFight(damager.getName(), true, time);
+			plugin.setFight(victim.getName(), true, time);
 			return;
 		}
 	}

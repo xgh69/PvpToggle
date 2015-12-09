@@ -62,7 +62,7 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					plugin.setPvpSettings(player.getUniqueId(), true);
+					plugin.setPvp(player.getUniqueId(), true);
 					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_enable").replace("$player", player.getName()));
 					return true;
 				}
@@ -78,7 +78,7 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					plugin.setPvpSettings(player.getUniqueId(), false);
+					plugin.setPvp(player.getUniqueId(), false);
 					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_disable").replace("$player", player.getName()));
 					return true;
 				}
@@ -94,12 +94,12 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					if(plugin.getPvpSettings(player.getUniqueId()))
+					if(plugin.getPvp(player.getUniqueId()))
 					{
 						sender.sendMessage(plugin.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvpadmin_status_enable"));
 						return true;
 					}
-					else if(!plugin.getPvpSettings(player.getUniqueId()))
+					else if(!plugin.getPvp(player.getUniqueId()))
 					{
 						sender.sendMessage(plugin.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvpadmin_status_disable"));
 						return true;					

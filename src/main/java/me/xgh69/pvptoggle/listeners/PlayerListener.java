@@ -29,16 +29,16 @@ public class PlayerListener implements Listener
 	public void onJoin(PlayerJoinEvent evt)
 	{
 		Player player = evt.getPlayer();
-		if(!plugin.containsPvpSettings(player.getUniqueId()))
+		if(!plugin.containsPvp(player.getUniqueId()))
 		{
-			plugin.setPvpSettings(player.getUniqueId(), true);
+			plugin.setPvp(player.getUniqueId(), true);
 			player.sendMessage(plugin.getMessage("first_join").replace("$player", player.getName()));
 		}
 		
-		if(plugin.isInFight(player.getName()))
+		if(plugin.isFight(player.getName()))
 		{
 			player.sendMessage(plugin.getMessage("logout_join").replace("$player", player.getName()));
-			plugin.setInFight(player.getName(), false, -1);
+			plugin.setFight(player.getName(), false, -1);
 		}
 	}
 	
@@ -48,11 +48,11 @@ public class PlayerListener implements Listener
 	{
 		Player player = evt.getPlayer();
 		
-		if(plugin.isInFight(player.getName()))
+		if(plugin.isFight(player.getName()))
 		{
-			if(plugin.compareFightAndCurrentTimes(player.getName()))
+			if(plugin.isTimeOver(player.getName()))
 			{
-				plugin.setInFight(player.getName(), false, -1);
+				plugin.setFight(player.getName(), false, -1);
 				player.sendMessage(plugin.getMessage("stopfight").replace("$player", player.getName()));
 			}
 		}
@@ -82,11 +82,11 @@ public class PlayerListener implements Listener
 	public void onCommand(PlayerCommandPreprocessEvent evt)
 	{
 		Player player = evt.getPlayer();
-		if(plugin.isInFight(player.getName()))
+		if(plugin.isFight(player.getName()))
 		{
-			if(plugin.compareFightAndCurrentTimes(player.getName()))
+			if(plugin.isTimeOver(player.getName()))
 			{
-				plugin.setInFight(player.getName(), false, -1);
+				plugin.setFight(player.getName(), false, -1);
 			}
 			else
 			{
@@ -122,18 +122,18 @@ public class PlayerListener implements Listener
 		Player player = evt.getPlayer();
 		PvpToggle plugin = PvpToggle.getInstance();
 		
-		if(plugin.isInFight(player.getName()))
+		if(plugin.isFight(player.getName()))
 		{
-			int i = plugin.getFightTime(player.getName());
+			long i = plugin.getFightTime(player.getName());
 			Bukkit.broadcastMessage(plugin.getMessage("logout_left").replace("$player", player.getName()));
 			player.setHealth(0.00D);
 			
-			for(Object o : plugin.getPlayersInFight())
+			for(Object o : plugin.getPlayersFights())
 			{
 				String key = (String) o;
 				if(plugin.getFightTime(key) == i)
 				{
-					plugin.setInFight(key, false, -1);
+					plugin.setFight(key, false, -1);
 					Player target = Bukkit.getPlayer(key);
 					target.sendMessage(plugin.getMessage("logout_left_stopfight").replace("$player", target.getName()));
 					break;

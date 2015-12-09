@@ -24,7 +24,7 @@ public final class PvpToggle extends JavaPlugin
 {
 	private File configFile;
 	private YamlConfiguration config;
-	private Map<String, Integer> inFight;
+	private Map<String, Long> inFight;
 	private List<String> allowedCommands;
 	private String lang;
 	private EntityListener entityListener;
@@ -37,11 +37,6 @@ public final class PvpToggle extends JavaPlugin
 	public static PvpToggle getInstance()
 	{
 		return pvptoggle;
-	}
-	
-	public static void log(String s)
-	{
-		pvptoggle.getLogger().info(s);
 	}
 	
 	public void saveConfig()
@@ -73,7 +68,7 @@ public final class PvpToggle extends JavaPlugin
 		entityListener = new EntityListener();
 		lang = System.getProperty("user.language");
 		allowedCommands = new ArrayList<String>();
-		inFight = new HashMap<String, Integer>();
+		inFight = new HashMap<String, Long>();
 		configFile = new File("plugins" + File.separator + NAME + File.separator + "config.yml");
 		config = YamlConfiguration.loadConfiguration(configFile);
 		
@@ -212,21 +207,21 @@ public final class PvpToggle extends JavaPlugin
 		reloadConfig();
 	}
 	
-	public boolean containsPvpSettings(UUID uid)
+	public boolean containsPvp(UUID uid)
 	{
 		reloadConfig();
 		return config.contains("users." + uid.toString());
 	}
 	
-	public boolean getPvpSettings(UUID uid)
+	public boolean getPvp(UUID uid)
 	{
 		reloadConfig();
-		if(!containsPvpSettings(uid))
+		if(!containsPvp(uid))
 			return true;
 		return config.getBoolean("users." + uid.toString());
 	}
 	
-	public void setPvpSettings(UUID uid, boolean b)
+	public void setPvp(UUID uid, boolean b)
 	{
 		config.set("users." + uid.toString(), b);
 		saveConfig();
@@ -242,40 +237,49 @@ public final class PvpToggle extends JavaPlugin
 		allowedCommands.add(commandName);
 	}
 	
-	public void setInFight(String playerName, boolean fight, int time)
+	public void setFight(String playerName, boolean fight, long time)
 	{
-		if(time == -1 && fight)
+		if(time < 0 && fight)
 			time = getTimeStamp();
-		if(fight && !inFight.containsKey(playerName))
+		
+		if(fight)
+		{
+			if(isFight(playerName))
+			{
+				inFight.remove(playerName);
+			}
+		}
+		
+		if(fight)
 		{
 			inFight.put(playerName, time);
 		}
-		else if(!fight && inFight.containsKey(playerName))
+		else if(!fight && isFight(playerName))
 		{
 			inFight.remove(playerName);
 		}
 	}
 	
-	public boolean isInFight(String playerName)
+	public boolean isFight(String playerName)
 	{
 		return inFight.containsKey(playerName);
 	}
 	
-	public int getFightTime(String playerName)
+	public long getFightTime(String playerName)
 	{
 		return inFight.get(playerName);
 	}
 	
-	public boolean compareFightAndCurrentTimes(String playerName)
+	public boolean isTimeOver(String playerName)
 	{
-		int i = inFight.get(playerName);
-		int j = getTimeStamp();
-		if(i + 2*60 == j || i + 2*60 < j)
+		long i = inFight.get(playerName);
+		long j = getTimeStamp();
+		if(i + 1*60*60 == j || i + 1*60*60 < j)
 			return true;
 		return false;
 	}
 	
-	public List<Object> getPlayersInFight()
+	public List<Object> getPlayersFights()
 	{
 		return Arrays.asList(inFight.keySet().toArray());
 	}
@@ -285,11 +289,13 @@ public final class PvpToggle extends JavaPlugin
 		return config.getString("messages." + msg).replace("&", "§");
 	}
 	
-	public int getTimeStamp()
+	public long getTimeStamp()
 	{
-		int now = Integer.parseInt((new SimpleDateFormat("HH")).format(new Date())) * 60 * 60;
-		now += Integer.parseInt((new SimpleDateFormat("mm")).format(new Date())) * 60;
-		now += Integer.parseInt((new SimpleDateFormat("ss")).format(new Date()));
+		Date date = new Date();
+		long now = Integer.parseInt((new SimpleDateFormat("HH")).format(date)) * 60 * 60 * 60;
+		now += Integer.parseInt((new SimpleDateFormat("mm")).format(date)) * 60 * 60;
+		now += Integer.parseInt((new SimpleDateFormat("ss")).format(date)) * 60;
+		now += Integer.parseInt((new SimpleDateFormat("SS")).format(date));
 		
 		return now;
 	}
