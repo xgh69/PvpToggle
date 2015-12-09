@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import me.xgh69.pvptoggle.commands.PvpCommand;
 import me.xgh69.pvptoggle.commands.PvpAdminCommand;
+import me.xgh69.pvptoggle.commands.PvpCommand;
 import me.xgh69.pvptoggle.listeners.EntityListener;
 import me.xgh69.pvptoggle.listeners.PlayerListener;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,7 +33,7 @@ public final class PvpToggle extends JavaPlugin
 	private static PvpToggle pvptoggle;
 	
 	public static final String NAME = "PvpToggle";
-	public static final String VERSION = "1.2";
+	public static final String VERSION = "1.3";
 	
 	public static PvpToggle getInstance()
 	{
@@ -94,7 +95,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cuboid_pvponly_exit", "&cWyszedles z terenu z permanentnym PVP.");
 				config.addDefault("messages.cuboid_pvponly_cmd_block", "&cNie mozesz uzyc tutaj tej komendy.");
 				config.addDefault("messages.stopfight", "&aMozesz sie juz wylogowac.");
-				config.addDefault("messages.cmd_infight", "&cMusisz odczekac 2 minuty od konca walki.");
+				config.addDefault("messages.cmd_infight", "&cMusisz odczekac 1 minute od konca walki.");
 				config.addDefault("messages.player_protected", "&c$player jest chroniony.");
 				config.addDefault("messages.player_damager", "&cNie wylogowywuj sie. Uderzyles $player.");
 				config.addDefault("messages.player_damaged", "&cNie wylogowywuj sie. $player Cie uderzyl.");
@@ -114,6 +115,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&awlaczona");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cwylaczona");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player jest offline.");
+				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JanKowalski", true);
 				config.options().copyDefaults(true);
@@ -133,7 +135,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cuboid_pvponly_exit", "&cYou are exiting from perm pvp region.");
 				config.addDefault("messages.cuboid_pvponly_cmd_block", "&cYou cannot use this command here.");
 				config.addDefault("messages.stopfight", "&aYou can logout now.");
-				config.addDefault("messages.cmd_infight", "&cPlease wait 2 minutes after fight.");
+				config.addDefault("messages.cmd_infight", "&cPlease wait 1 minute after fight.");
 				config.addDefault("messages.player_protected", "&c$player is protected.");
 				config.addDefault("messages.player_damager", "&cDon't logout. You hurted $player.");
 				config.addDefault("messages.player_damaged", "&cDon't logout. $player hurt you.");
@@ -153,6 +155,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&aenabled");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
+				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
@@ -172,7 +175,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cuboid_pvponly_exit", "&cYou are exiting from perm pvp region.");
 				config.addDefault("messages.cuboid_pvponly_cmd_block", "&cYou cannot use this command here.");
 				config.addDefault("messages.stopfight", "&aYou can logout now.");
-				config.addDefault("messages.cmd_infight", "&cPlease wait 2 minutes after fight.");
+				config.addDefault("messages.cmd_infight", "&cPlease wait 1 minute after fight.");
 				config.addDefault("messages.player_protected", "&c$player is protected.");
 				config.addDefault("messages.player_damager", "&cDon't logout. You hurted $player.");
 				config.addDefault("messages.player_damaged", "&cDon't logout. $player hurt you.");
@@ -192,6 +195,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&aenabled");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
+				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
@@ -209,15 +213,21 @@ public final class PvpToggle extends JavaPlugin
 	
 	public boolean containsPvp(UUID uid)
 	{
+		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uid);
 		reloadConfig();
+		if(config.contains("users." + offlinePlayer.getName()))
+			return config.getBoolean("users." + offlinePlayer.getName());
 		return config.contains("users." + uid.toString());
 	}
 	
 	public boolean getPvp(UUID uid)
 	{
+		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uid);
 		reloadConfig();
 		if(!containsPvp(uid))
 			return true;
+		if(config.contains("users." + offlinePlayer.getName()))
+			return config.getBoolean("users." + offlinePlayer.getName());
 		return config.getBoolean("users." + uid.toString());
 	}
 	
@@ -289,12 +299,24 @@ public final class PvpToggle extends JavaPlugin
 		return config.getString("messages." + msg).replace("&", "§");
 	}
 	
+	public boolean getSettings(String key)
+	{
+		if(!config.contains("settings." + key))
+			return true;
+		return config.getBoolean("settings." + key);
+	}
+	
+	public boolean containsSettings(String key)
+	{
+		return config.contains("settings." + key);
+	}
+	
 	public long getTimeStamp()
 	{
 		Date date = new Date();
 		long now = Integer.parseInt((new SimpleDateFormat("HH")).format(date)) * 60 * 60 * 60;
 		now += Integer.parseInt((new SimpleDateFormat("mm")).format(date)) * 60 * 60;
-		now += Integer.parseInt((new SimpleDateFormat("ss")).format(date)) * 60;
+		now += Integer.parseInt((new SimpleDateFormat("ss")).format(date)) * 60; 
 		now += Integer.parseInt((new SimpleDateFormat("SS")).format(date));
 		
 		return now;
