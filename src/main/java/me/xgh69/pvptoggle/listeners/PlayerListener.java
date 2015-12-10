@@ -29,6 +29,7 @@ public class PlayerListener implements Listener
 	public void onJoin(PlayerJoinEvent evt)
 	{
 		Player player = evt.getPlayer();
+		
 		if(!plugin.containsPvp(player.getUniqueId()))
 		{
 			boolean pvp = plugin.getSettings("pvp_on_first_join");
@@ -40,6 +41,15 @@ public class PlayerListener implements Listener
 		{
 			player.sendMessage(plugin.getMessage("logout_join").replace("$player", player.getName()));
 			plugin.setFight(player.getName(), false, -1);
+		}
+		
+		if(plugin.getPvp(player.getUniqueId()))
+		{
+			player.sendMessage(plugin.getMessage("join").replace("$player", player.getName()) + plugin.getMessage("join_enable").replace("$player", player.getName()));
+		}
+		else
+		{
+			player.sendMessage(plugin.getMessage("join").replace("$player", player.getName()) + plugin.getMessage("join_disable").replace("$player", player.getName()));
 		}
 	}
 	

@@ -25,7 +25,12 @@ public class PvpCommand implements CommandExecutor
 		
 		if(args.length == 1)
 		{	
-			if(args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("on"))
+			if(args[0].equalsIgnoreCase("help"))
+			{
+				sender.sendMessage(plugin.getMessage("cmd_pvp_usage").replace("$player", sender.getName()));
+				return true;
+			}
+			else if(args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("on"))
 			{
 				plugin.setPvp(player.getUniqueId(), true);
 				player.sendMessage(plugin.getMessage("cmd_pvp_enable").replace("$player", player.getName()));

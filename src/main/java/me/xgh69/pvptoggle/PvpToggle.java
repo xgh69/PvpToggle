@@ -17,8 +17,11 @@ import me.xgh69.pvptoggle.listeners.EntityListener;
 import me.xgh69.pvptoggle.listeners.PlayerListener;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PvpToggle extends JavaPlugin
@@ -33,7 +36,7 @@ public final class PvpToggle extends JavaPlugin
 	private static PvpToggle pvptoggle;
 	
 	public static final String NAME = "PvpToggle";
-	public static final String VERSION = "1.3";
+	public static final String VERSION = "1.3-SNAPSHOT";
 	
 	public static PvpToggle getInstance()
 	{
@@ -61,10 +64,36 @@ public final class PvpToggle extends JavaPlugin
 		return lang;
 	}
 	
+	public boolean checkDepends()
+	{
+		PluginManager pluginManager = Bukkit.getPluginManager();
+		Plugin worldEdit = pluginManager.getPlugin("WorldEdit");
+		Plugin worldGuard = pluginManager.getPlugin("WorldGuard");
+		if(worldEdit == null || worldGuard == null)
+			return false;
+		return true;
+	}
+	
+	@Override
+	public void onLoad()
+	{
+		pvptoggle = this;
+		if(!checkDepends())
+		{
+			PluginManager pluginManager = Bukkit.getPluginManager();
+			pvptoggle.getLogger().info("Please install WorldEdit and WorldGuard to use this plugin.");
+			pluginManager.disablePlugin((Plugin) pvptoggle);
+			return;
+		}
+		else
+		{
+			pvptoggle.getLogger().info("Loaded WorldGuard API.");
+		}
+	}
+	
 	@Override
 	public void onEnable()
 	{
-		pvptoggle = this;
 		playerListener = new PlayerListener();
 		entityListener = new EntityListener();
 		lang = System.getProperty("user.language");
@@ -88,6 +117,9 @@ public final class PvpToggle extends JavaPlugin
 				getLogger().info("Your language is supported.");
 				config.addDefault("messages", "");
 				config.addDefault("messages.first_join", "&aOchrona przed walka zostala wlaczona.");
+				config.addDefault("messages.join", "&bTwoja ochrona jest ");
+				config.addDefault("messages.join_enable", "&awlaczona&b.");
+				config.addDefault("messages.join_disable", "&cwylaczona&b.");
 				config.addDefault("messages.logout_join", "&cWylogowales sie podczas walki.");
 				config.addDefault("messages.logout_left", "&c$player wylogowal sie podczas walki.");
 				config.addDefault("messages.logout_left_stopfight", "&aTy juz mozesz sie spokojnie wylogowac, poniewaz twoj kolega lognal.");
@@ -108,7 +140,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_console", "&c$player nie potrafi walczyc.");
 				config.addDefault("messages.cmd_pvpadmin_reload", "&cPrzeladowales konfiguracje.");
 				config.addDefault("messages.cmd_pvpadmin_noperm", "&cBrak uprawnien.");
-				config.addDefault("messages.cmd_pvpadmin_usage", "&a/pvpadmin enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&aPoprawne uzycie: /pvpadmin enable <name> | disable <name> | status <name> | help | version");
 				config.addDefault("messages.cmd_pvpadmin_enable", "&aWlaczono ochrone graczowi $player");
 				config.addDefault("messages.cmd_pvpadmin_disable", "&cWylaczono ochrone graczowi $player");
 				config.addDefault("messages.cmd_pvpadmin_status", "&bOchrona gracza $player jest ");
@@ -128,6 +160,9 @@ public final class PvpToggle extends JavaPlugin
 				getLogger().info("Your language is supported.");
 				config.addDefault("messages", "");
 				config.addDefault("messages.first_join", "&aFight protected is enabled.");
+				config.addDefault("messages.join", "&bYour pvp protection is ");
+				config.addDefault("messages.join_enable", "&aenabled&b.");
+				config.addDefault("messages.join_disable", "&cdisabled&b.");
 				config.addDefault("messages.logout_join", "&cYou are logout.");
 				config.addDefault("messages.logout_left", "&c$player logout in fight.");
 				config.addDefault("messages.logout_left_stopfight", "&aYou can logout, because your friend logout");
@@ -143,12 +178,12 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_enable", "&cYour pvp protection is enabled.");
 				config.addDefault("messages.cmd_pvp_disable", "&cYour pvp protection is disabled.");
 				config.addDefault("messages.cmd_pvp_status", "&bYour pvp protection is ");
-				config.addDefault("messages.cmd_pvp_status_enable", "&cenabled&b.");
-				config.addDefault("messages.cmd_pvp_status_disable", "&adisabled&b.");
+				config.addDefault("messages.cmd_pvp_status_enable", "&aenabled&b.");
+				config.addDefault("messages.cmd_pvp_status_disable", "&cdisabled&b.");
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
 				config.addDefault("messages.cmd_pvpadmin_reload", "&cConfig reloaded.");
 				config.addDefault("messages.cmd_pvpadmin_noperm", "&cNo permission.");
-				config.addDefault("messages.cmd_pvpadmin_usage", "&a/pvpadmin enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&aUsage: /pvpadmin enable <name> | disable <name> | status <name> | help | version");
 				config.addDefault("messages.cmd_pvpadmin_enable", "&aEnabled $player's pvp proection.");
 				config.addDefault("messages.cmd_pvpadmin_disable", "&cDisabled $player's pvp protection.");
 				config.addDefault("messages.cmd_pvpadmin_status", "&b$player's protection is ");
@@ -168,6 +203,9 @@ public final class PvpToggle extends JavaPlugin
 				getLogger().info("Your language is not supported and using English.");
 				config.addDefault("messages", "");
 				config.addDefault("messages.first_join", "&aFight protected is enabled.");
+				config.addDefault("messages.join", "&bYour pvp protection is ");
+				config.addDefault("messages.join_enable", "&aenabled&b.");
+				config.addDefault("messages.join_disable", "&cdisabled&b.");
 				config.addDefault("messages.logout_join", "&cYou are logout.");
 				config.addDefault("messages.logout_left", "&c$player logout in fight.");
 				config.addDefault("messages.logout_left_stopfight", "&aYou can logout, because your friend logout");
@@ -183,12 +221,12 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_enable", "&cYour pvp protection is enabled.");
 				config.addDefault("messages.cmd_pvp_disable", "&cYour pvp protection is disabled.");
 				config.addDefault("messages.cmd_pvp_status", "&bYour pvp protection is ");
-				config.addDefault("messages.cmd_pvp_status_enable", "&cenabled&b.");
-				config.addDefault("messages.cmd_pvp_status_disable", "&adisabled&b.");
+				config.addDefault("messages.cmd_pvp_status_enable", "&aenabled&b.");
+				config.addDefault("messages.cmd_pvp_status_disable", "&cdisabled&b.");
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
 				config.addDefault("messages.cmd_pvpadmin_reload", "&cConfig reloaded.");
 				config.addDefault("messages.cmd_pvpadmin_noperm", "&cNo permission.");
-				config.addDefault("messages.cmd_pvpadmin_usage", "&a/pvptoggle enable <name> | disable <name> | status <name> | info");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&aUsage: /pvptoggle enable <name> | disable <name> | status <name> | help | version");
 				config.addDefault("messages.cmd_pvpadmin_enable", "&aEnabled $player's pvp proection.");
 				config.addDefault("messages.cmd_pvpadmin_disable", "&cDisabled $player's pvp protection.");
 				config.addDefault("messages.cmd_pvpadmin_status", "&b$player's protection is ");
@@ -296,6 +334,12 @@ public final class PvpToggle extends JavaPlugin
 	
 	public String getMessage(String msg)
 	{
+		if(!config.contains("messages." + msg))
+		{
+			pvptoggle.getLogger().info("Not found message \"" + msg + "\" in config.yml!");
+			return ChatColor.RED + "Error! Not found message \"" + msg + "\" in config.yml!\n" + ChatColor.GREEN + "Please update or reinstall plugin!".replace("&", "§");
+		}
+		
 		return config.getString("messages." + msg).replace("&", "§");
 	}
 	

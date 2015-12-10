@@ -25,28 +25,22 @@ public class PvpAdminCommand implements CommandExecutor
 		}
 		if(args.length == 1)
 		{
-			if(args[0].equalsIgnoreCase("reload"))
+			if(args[0].equalsIgnoreCase("help"))
+			{
+				sender.sendMessage(plugin.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
+				return true;
+			}
+			else if(args[0].equalsIgnoreCase("version") || args[0].equalsIgnoreCase("ver"))
+			{
+				sender.sendMessage(ChatColor.GREEN + "Version: " + PvpToggle.VERSION);
+				sender.sendMessage(ChatColor.GREEN + "Author: xgh69");
+				return true;
+			}
+			else if(args[0].equalsIgnoreCase("reload"))
 			{
 				plugin.reloadConfig();
 				sender.sendMessage(plugin.getMessage("cmd_pvpadmin_reload").replace("$player", sender.getName()));
 				return true;
-			}
-			else if(args[0].equalsIgnoreCase("info"))
-			{
-				if(plugin.getLang().equalsIgnoreCase("pl"))
-				{
-					sender.sendMessage(ChatColor.GREEN + "Autor: xgh69");
-					sender.sendMessage(ChatColor.GREEN + "Wersja: 1.3");
-					sender.sendMessage(ChatColor.GREEN + "Ten plugin dodaje prywatne ustawienia pvp dla graczy. Flagi WorldGuard'a sa wspierane.");
-					return true;
-				}
-				else
-				{
-					sender.sendMessage(ChatColor.GREEN + "Author: xgh69");
-					sender.sendMessage(ChatColor.GREEN + "Version: 1.3");
-					sender.sendMessage(ChatColor.GREEN + "This plugin add private pvp settings for players. WorldGuard flags are supported.");
-					return true;
-				}
 			}
 			else
 			{
@@ -56,7 +50,7 @@ public class PvpAdminCommand implements CommandExecutor
 		}
 		else if(args.length == 2)
 		{
-			if(args[0].equalsIgnoreCase("enable"))
+			if(args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("on"))
 			{
 				OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
 				if(offlinePlayer.isOnline())
@@ -72,7 +66,7 @@ public class PvpAdminCommand implements CommandExecutor
 					return true;
 				}
 			}
-			else if(args[0].equalsIgnoreCase("disable"))
+			else if(args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("off"))
 			{
 				OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
 				if(offlinePlayer.isOnline())
