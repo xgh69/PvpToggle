@@ -3,7 +3,9 @@ package me.xgh69.pvptoggle.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
+import me.xgh69.pvptoggle.PvpUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,34 +24,44 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 
 public class PlayerListener implements Listener
 {
-	private List<String> inPvp = new ArrayList<String>();
-	private PvpToggle plugin = PvpToggle.getInstance();
+	private List<String> inPvp;
+	private PvpToggle plugin;
+	private PvpManager pvpmanager;
+	private PvpUtils utils;
+	
+	public PlayerListener()
+	{
+		inPvp = new ArrayList<String>();
+		plugin = PvpToggle.getInstance();
+		pvpmanager = plugin.getPvpManager();
+		utils = plugin.getUtils();
+	}
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent evt)
 	{
 		Player player = evt.getPlayer();
 		
-		if(!plugin.containsPvp(player.getUniqueId()))
+		if(!pvpmanager.containsPvp(player.getUniqueId()))
 		{
-			boolean pvp = plugin.getSettings("pvp_on_first_join");
-			plugin.setPvp(player.getUniqueId(), pvp);
-			player.sendMessage(plugin.getMessage("first_join").replace("$player", player.getName()));
+			boolean pvp = utils.getSettings("pvp_on_first_join");
+			pvpmanager.setPvp(player.getUniqueId(), pvp);
+			player.sendMessage(utils.getMessage("first_join").replace("$player", player.getName()));
 		}
 		
-		if(plugin.isFight(player.getName()))
+		if(pvpmanager.isFight(player.getName()))
 		{
-			player.sendMessage(plugin.getMessage("logout_join").replace("$player", player.getName()));
-			plugin.setFight(player.getName(), false, -1);
+			player.sendMessage(utils.getMessage("logout_join").replace("$player", player.getName()));
+			pvpmanager.setFight(player.getName(), false, -1);
 		}
 		
-		if(plugin.getPvp(player.getUniqueId()))
+		if(pvpmanager.getPvp(player.getUniqueId()))
 		{
-			player.sendMessage(plugin.getMessage("join").replace("$player", player.getName()) + plugin.getMessage("join_enable").replace("$player", player.getName()));
+			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
 		}
 		else
 		{
-			player.sendMessage(plugin.getMessage("join").replace("$player", player.getName()) + plugin.getMessage("join_disable").replace("$player", player.getName()));
+			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
 		}
 	}
 	
@@ -59,12 +71,12 @@ public class PlayerListener implements Listener
 	{
 		Player player = evt.getPlayer();
 		
-		if(plugin.isFight(player.getName()))
+		if(pvpmanager.isFight(player.getName()))
 		{
-			if(plugin.isTimeOver(player.getName()))
+			if(pvpmanager.isTimeOver(player.getName()))
 			{
-				plugin.setFight(player.getName(), false, -1);
-				player.sendMessage(plugin.getMessage("stopfight").replace("$player", player.getName()));
+				pvpmanager.setFight(player.getName(), false, -1);
+				player.sendMessage(utils.getMessage("stopfight").replace("$player", player.getName()));
 			}
 		}
 		
@@ -74,7 +86,7 @@ public class PlayerListener implements Listener
 		{
 			if(!inPvp.contains(player.getName()))
 			{
-				player.sendMessage(plugin.getMessage("cuboid_pvponly_enter").replace("$player", player.getName()));
+				player.sendMessage(utils.getMessage("cuboid_pvponly_enter").replace("$player", player.getName()));
 				inPvp.add(player.getName());
 			}
 		}
@@ -82,7 +94,7 @@ public class PlayerListener implements Listener
 		{
 			if(inPvp.contains(plugin.getName()))
 			{
-				player.sendMessage(plugin.getMessage("cuboid_pvponly_exit").replace("$player", player.getName()));
+				player.sendMessage(utils.getMessage("cuboid_pvponly_exit").replace("$player", player.getName()));
 				inPvp.remove(plugin.getName());
 			}
 		}
@@ -93,17 +105,17 @@ public class PlayerListener implements Listener
 	public void onCommand(PlayerCommandPreprocessEvent evt)
 	{
 		Player player = evt.getPlayer();
-		if(plugin.isFight(player.getName()))
+		if(pvpmanager.isFight(player.getName()))
 		{
-			if(plugin.isTimeOver(player.getName()))
+			if(pvpmanager.isTimeOver(player.getName()))
 			{
-				plugin.setFight(player.getName(), false, -1);
+				pvpmanager.setFight(player.getName(), false, -1);
 			}
 			else
 			{
-				if(!plugin.isAllowedCommand(evt.getMessage()))
+				if(!pvpmanager.isAllowedCommand(evt.getMessage()))
 				{
-					player.sendMessage(plugin.getMessage("cmd_infight").replace("$player", player.getName()));
+					player.sendMessage(utils.getMessage("cmd_infight").replace("$player", player.getName()));
 					evt.setCancelled(true);
 				}
 				else
@@ -120,7 +132,7 @@ public class PlayerListener implements Listener
 		
 			if(set.getFlag(DefaultFlag.PVP) == State.ALLOW)
 			{
-				player.sendMessage(plugin.getMessage("cuboid_pvponly_cmd_block").replace("$player", player.getName()));
+				player.sendMessage(utils.getMessage("cuboid_pvponly_cmd_block").replace("$player", player.getName()));
 				evt.setCancelled(true);
 			}
 		}
@@ -133,20 +145,20 @@ public class PlayerListener implements Listener
 		Player player = evt.getPlayer();
 		PvpToggle plugin = PvpToggle.getInstance();
 		
-		if(plugin.isFight(player.getName()))
+		if(pvpmanager.isFight(player.getName()))
 		{
-			long i = plugin.getFightTime(player.getName());
-			Bukkit.broadcastMessage(plugin.getMessage("logout_left").replace("$player", player.getName()));
+			long i = pvpmanager.getFightTime(player.getName());
+			Bukkit.broadcastMessage(utils.getMessage("logout_left").replace("$player", player.getName()));
 			player.setHealth(0.00D);
 			
-			for(Object o : plugin.getPlayersFights())
+			for(Object o : pvpmanager.getPlayersFights())
 			{
 				String key = (String) o;
-				if(plugin.getFightTime(key) == i)
+				if(pvpmanager.getFightTime(key) == i)
 				{
-					plugin.setFight(key, false, -1);
+					pvpmanager.setFight(key, false, -1);
 					Player target = Bukkit.getPlayer(key);
-					target.sendMessage(plugin.getMessage("logout_left_stopfight").replace("$player", target.getName()));
+					target.sendMessage(utils.getMessage("logout_left_stopfight").replace("$player", target.getName()));
 					break;
 				}
 			}

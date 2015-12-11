@@ -1,6 +1,8 @@
 package me.xgh69.pvptoggle.listeners;
 
+import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
+import me.xgh69.pvptoggle.PvpUtils;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +17,18 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 
 public class EntityListener implements Listener
 {
+	
+	private PvpToggle plugin;
+	private PvpManager pvpmanager;
+	private PvpUtils utils;
+	
+	public EntityListener()
+	{
+		plugin = PvpToggle.getInstance();
+		pvpmanager = plugin.getPvpManager();
+		utils = plugin.getUtils();
+	}
+	
 	@EventHandler
 	@SuppressWarnings("deprecation")
 	public void onDamageByEntity(EntityDamageByEntityEvent evt)
@@ -24,7 +38,6 @@ public class EntityListener implements Listener
 		
 		final Player victim = (Player) evt.getEntity();
 		final Player damager = (Player) evt.getDamager();
-		PvpToggle plugin = PvpToggle.getInstance();
 		RegionManager rm = WorldGuardPlugin.inst().getRegionManager(damager.getWorld());
 		ApplicableRegionSet set = rm.getApplicableRegions(victim.getLocation());
 		
@@ -36,26 +49,26 @@ public class EntityListener implements Listener
 				return;
 			}
 			
-			if(plugin.getPvp(victim.getUniqueId()) || plugin.getPvp(damager.getUniqueId()))
+			if(pvpmanager.getPvp(victim.getUniqueId()) || pvpmanager.getPvp(damager.getUniqueId()))
 			{
-				damager.sendMessage(plugin.getMessage("player_protected").replace("$player", victim.getName()));
+				damager.sendMessage(utils.getMessage("player_protected").replace("$player", victim.getName()));
 				evt.setCancelled(true);
 				return;
 			}
 			else
 			{
 				evt.setCancelled(false);
-				if(!plugin.isFight(victim.getName()))
-					victim.sendMessage(plugin.getMessage("player_damaged").replace("$player", damager.getName()));
+				if(!pvpmanager.isFight(victim.getName()))
+					victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
 				
-				if(!plugin.isFight(damager.getName()))
-					damager.sendMessage(plugin.getMessage("player_damager").replace("$player", victim.getName()));
+				if(!pvpmanager.isFight(damager.getName()))
+					damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 				
-				if(!plugin.isFight(victim.getName()) && !plugin.isFight(damager.getName()))
+				if(!pvpmanager.isFight(victim.getName()) && !pvpmanager.isFight(damager.getName()))
 				{
 					long time = plugin.getTimeStamp();
-					plugin.setFight(victim.getName(), true, time);
-					plugin.setFight(damager.getName(), true, time);
+					pvpmanager.setFight(victim.getName(), true, time);
+					pvpmanager.setFight(damager.getName(), true, time);
 				}
 				return;
 			}
@@ -63,14 +76,14 @@ public class EntityListener implements Listener
 		else if(set.getFlag(DefaultFlag.PVP) == State.ALLOW)
 		{
 			evt.setCancelled(false);
-			if(!plugin.isFight(victim.getName()))
-				victim.sendMessage(plugin.getMessage("player_damaged").replace("$player", damager.getName()));
+			if(!pvpmanager.isFight(victim.getName()))
+				victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
 			
-			if(!plugin.isFight(damager.getName()))
-				damager.sendMessage(plugin.getMessage("player_damager").replace("$player", victim.getName()));
+			if(!pvpmanager.isFight(damager.getName()))
+				damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 			long time = plugin.getTimeStamp();
-			plugin.setFight(damager.getName(), true, time);
-			plugin.setFight(victim.getName(), true, time);
+			pvpmanager.setFight(damager.getName(), true, time);
+			pvpmanager.setFight(victim.getName(), true, time);
 			return;
 		}
 	}

@@ -1,6 +1,8 @@
 package me.xgh69.pvptoggle.commands;
 
+import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
+import me.xgh69.pvptoggle.PvpUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,17 +19,19 @@ public class PvpAdminCommand implements CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		PvpToggle plugin = PvpToggle.getInstance();
+		PvpManager pvpmanager = plugin.getPvpManager();
+		PvpUtils utils = plugin.getUtils();
 		
 		if(!sender.hasPermission("pvptoggle.admin"))
 		{
-			sender.sendMessage(plugin.getMessage("cmd_pvpadmin_noperm").replace("$player", sender.getName()));
+			sender.sendMessage(utils.getMessage("cmd_pvpadmin_noperm").replace("$player", sender.getName()));
 			return false;
 		}
 		if(args.length == 1)
 		{
 			if(args[0].equalsIgnoreCase("help"))
 			{
-				sender.sendMessage(plugin.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
+				sender.sendMessage(utils.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("version") || args[0].equalsIgnoreCase("ver"))
@@ -39,12 +43,12 @@ public class PvpAdminCommand implements CommandExecutor
 			else if(args[0].equalsIgnoreCase("reload"))
 			{
 				plugin.reloadConfig();
-				sender.sendMessage(plugin.getMessage("cmd_pvpadmin_reload").replace("$player", sender.getName()));
+				sender.sendMessage(utils.getMessage("cmd_pvpadmin_reload").replace("$player", sender.getName()));
 				return true;
 			}
 			else
 			{
-				sender.sendMessage(plugin.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
+				sender.sendMessage(utils.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
 				return true;
 			}
 		}
@@ -56,13 +60,13 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					plugin.setPvp(player.getUniqueId(), true);
-					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_enable").replace("$player", player.getName()));
+					pvpmanager.setPvp(player.getUniqueId(), true);
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_enable").replace("$player", player.getName()));
 					return true;
 				}
 				else
 				{
-					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_offline").replace("$player", offlinePlayer.getName()));
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_offline").replace("$player", offlinePlayer.getName()));
 					return true;
 				}
 			}
@@ -72,13 +76,13 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					plugin.setPvp(player.getUniqueId(), false);
-					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_disable").replace("$player", player.getName()));
+					pvpmanager.setPvp(player.getUniqueId(), false);
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_disable").replace("$player", player.getName()));
 					return true;
 				}
 				else
 				{
-					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_offline").replace("$player", offlinePlayer.getName()));
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_offline").replace("$player", offlinePlayer.getName()));
 					return true;
 				}
 			}
@@ -88,32 +92,32 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					if(plugin.getPvp(player.getUniqueId()))
+					if(pvpmanager.getPvp(player.getUniqueId()))
 					{
-						sender.sendMessage(plugin.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvpadmin_status_enable"));
+						sender.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + utils.getMessage("cmd_pvpadmin_status_enable"));
 						return true;
 					}
-					else if(!plugin.getPvp(player.getUniqueId()))
+					else if(!pvpmanager.getPvp(player.getUniqueId()))
 					{
-						sender.sendMessage(plugin.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvpadmin_status_disable"));
+						sender.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + utils.getMessage("cmd_pvpadmin_status_disable"));
 						return true;					
 					}
 				}
 				else
 				{
-					sender.sendMessage(plugin.getMessage("cmd_pvpadmin_offline").replace("$player", offlinePlayer.getName()));
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_offline").replace("$player", offlinePlayer.getName()));
 					return true;
 				}
 			}
 			else
 			{
-				sender.sendMessage(plugin.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
+				sender.sendMessage(utils.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
 				return true;
 			}
 		}
 		else
 		{
-			sender.sendMessage(plugin.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
+			sender.sendMessage(utils.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
 			return true;
 		}
 		return false;

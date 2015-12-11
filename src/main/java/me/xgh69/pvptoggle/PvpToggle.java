@@ -3,13 +3,7 @@ package me.xgh69.pvptoggle;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import me.xgh69.pvptoggle.commands.PvpAdminCommand;
 import me.xgh69.pvptoggle.commands.PvpCommand;
@@ -17,8 +11,6 @@ import me.xgh69.pvptoggle.listeners.EntityListener;
 import me.xgh69.pvptoggle.listeners.PlayerListener;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -28,11 +20,11 @@ public final class PvpToggle extends JavaPlugin
 {
 	private File configFile;
 	private YamlConfiguration config;
-	private Map<String, Long> inFight;
-	private List<String> allowedCommands;
 	private String lang;
 	private EntityListener entityListener;
 	private PlayerListener playerListener;
+	private PvpManager pvpmanager;
+	private PvpUtils utils;
 	private static PvpToggle pvptoggle;
 	
 	public static final String NAME = "PvpToggle";
@@ -41,6 +33,21 @@ public final class PvpToggle extends JavaPlugin
 	public static PvpToggle getInstance()
 	{
 		return pvptoggle;
+	}
+	
+	public PvpManager getPvpManager()
+	{
+		return pvpmanager;
+	}
+	
+	public PvpUtils getUtils()
+	{
+		return utils;
+	}
+	
+	public YamlConfiguration getConfig()
+	{
+		return config;
 	}
 	
 	public void saveConfig()
@@ -94,20 +101,19 @@ public final class PvpToggle extends JavaPlugin
 	@Override
 	public void onEnable()
 	{
-		playerListener = new PlayerListener();
-		entityListener = new EntityListener();
 		lang = System.getProperty("user.language");
-		allowedCommands = new ArrayList<String>();
-		inFight = new HashMap<String, Long>();
 		configFile = new File("plugins" + File.separator + NAME + File.separator + "config.yml");
 		config = YamlConfiguration.loadConfiguration(configFile);
-		
+		utils = new PvpUtils();
+		pvpmanager = new PvpManager();
+		playerListener = new PlayerListener();
+		entityListener = new EntityListener();
 		Bukkit.getPluginManager().registerEvents(playerListener, this);
 		Bukkit.getPluginManager().registerEvents(entityListener, this);
 		getCommand("pvp").setExecutor(new PvpCommand());
 		getCommand("pvpadmin").setExecutor(new PvpAdminCommand());
-		addAllowedCommand("/pvp status");
-		addAllowedCommand("/msg");
+		pvpmanager.addAllowedCommand("/pvp status");
+		pvpmanager.addAllowedCommand("/msg");
 		if(!configFile.exists())
 		{
 			getLogger().info("Config file not found: " + configFile.getPath());
@@ -140,7 +146,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_console", "&c$player nie potrafi walczyc.");
 				config.addDefault("messages.cmd_pvpadmin_reload", "&cPrzeladowales konfiguracje.");
 				config.addDefault("messages.cmd_pvpadmin_noperm", "&cBrak uprawnien.");
-				config.addDefault("messages.cmd_pvpadmin_usage", "&aPoprawne uzycie: /pvpadmin enable <name> | disable <name> | status <name> | help | version");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&aPoprawne uzycie: /pvpadmin enable <name> | disable <name> | status <name> | reload | help | version");
 				config.addDefault("messages.cmd_pvpadmin_enable", "&aWlaczono ochrone graczowi $player");
 				config.addDefault("messages.cmd_pvpadmin_disable", "&cWylaczono ochrone graczowi $player");
 				config.addDefault("messages.cmd_pvpadmin_status", "&bOchrona gracza $player jest ");
@@ -183,7 +189,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
 				config.addDefault("messages.cmd_pvpadmin_reload", "&cConfig reloaded.");
 				config.addDefault("messages.cmd_pvpadmin_noperm", "&cNo permission.");
-				config.addDefault("messages.cmd_pvpadmin_usage", "&aUsage: /pvpadmin enable <name> | disable <name> | status <name> | help | version");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&aUsage: /pvpadmin enable <name> | disable <name> | status <name> | reload | help | version");
 				config.addDefault("messages.cmd_pvpadmin_enable", "&aEnabled $player's pvp proection.");
 				config.addDefault("messages.cmd_pvpadmin_disable", "&cDisabled $player's pvp protection.");
 				config.addDefault("messages.cmd_pvpadmin_status", "&b$player's protection is ");
@@ -226,7 +232,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvp_console", "&cConsole cannot fight.");
 				config.addDefault("messages.cmd_pvpadmin_reload", "&cConfig reloaded.");
 				config.addDefault("messages.cmd_pvpadmin_noperm", "&cNo permission.");
-				config.addDefault("messages.cmd_pvpadmin_usage", "&aUsage: /pvptoggle enable <name> | disable <name> | status <name> | help | version");
+				config.addDefault("messages.cmd_pvpadmin_usage", "&aUsage: /pvptoggle enable <name> | disable <name> | status <name> | reload | help | version");
 				config.addDefault("messages.cmd_pvpadmin_enable", "&aEnabled $player's pvp proection.");
 				config.addDefault("messages.cmd_pvpadmin_disable", "&cDisabled $player's pvp protection.");
 				config.addDefault("messages.cmd_pvpadmin_status", "&b$player's protection is ");
@@ -247,112 +253,6 @@ public final class PvpToggle extends JavaPlugin
 		}
 		
 		reloadConfig();
-	}
-	
-	public boolean containsPvp(UUID uid)
-	{
-		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uid);
-		reloadConfig();
-		if(config.contains("users." + offlinePlayer.getName()))
-			return config.getBoolean("users." + offlinePlayer.getName());
-		return config.contains("users." + uid.toString());
-	}
-	
-	public boolean getPvp(UUID uid)
-	{
-		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uid);
-		reloadConfig();
-		if(!containsPvp(uid))
-			return true;
-		if(config.contains("users." + offlinePlayer.getName()))
-			return config.getBoolean("users." + offlinePlayer.getName());
-		return config.getBoolean("users." + uid.toString());
-	}
-	
-	public void setPvp(UUID uid, boolean b)
-	{
-		config.set("users." + uid.toString(), b);
-		saveConfig();
-	}
-	
-	public boolean isAllowedCommand(String commandName)
-	{
-		return allowedCommands.contains(commandName);
-	}
-	
-	public void addAllowedCommand(String commandName)
-	{
-		allowedCommands.add(commandName);
-	}
-	
-	public void setFight(String playerName, boolean fight, long time)
-	{
-		if(time < 0 && fight)
-			time = getTimeStamp();
-		
-		if(fight)
-		{
-			if(isFight(playerName))
-			{
-				inFight.remove(playerName);
-			}
-		}
-		
-		if(fight)
-		{
-			inFight.put(playerName, time);
-		}
-		else if(!fight && isFight(playerName))
-		{
-			inFight.remove(playerName);
-		}
-	}
-	
-	public boolean isFight(String playerName)
-	{
-		return inFight.containsKey(playerName);
-	}
-	
-	public long getFightTime(String playerName)
-	{
-		return inFight.get(playerName);
-	}
-	
-	public boolean isTimeOver(String playerName)
-	{
-		long i = inFight.get(playerName);
-		long j = getTimeStamp();
-		if(i + 1*60*60 == j || i + 1*60*60 < j)
-			return true;
-		return false;
-	}
-	
-	public List<Object> getPlayersFights()
-	{
-		return Arrays.asList(inFight.keySet().toArray());
-	}
-	
-	public String getMessage(String msg)
-	{
-		if(!config.contains("messages." + msg))
-		{
-			pvptoggle.getLogger().info("Not found message \"" + msg + "\" in config.yml!");
-			return ChatColor.RED + "Error! Not found message \"" + msg + "\" in config.yml!\n" + ChatColor.GREEN + "Please update or reinstall plugin!".replace("&", "§");
-		}
-		
-		return config.getString("messages." + msg).replace("&", "§");
-	}
-	
-	public boolean getSettings(String key)
-	{
-		if(!config.contains("settings." + key))
-			return true;
-		return config.getBoolean("settings." + key);
-	}
-	
-	public boolean containsSettings(String key)
-	{
-		return config.contains("settings." + key);
 	}
 	
 	public long getTimeStamp()

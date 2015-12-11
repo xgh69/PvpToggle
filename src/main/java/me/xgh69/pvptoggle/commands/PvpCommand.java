@@ -1,6 +1,8 @@
 package me.xgh69.pvptoggle.commands;
 
+import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
+import me.xgh69.pvptoggle.PvpUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -14,10 +16,12 @@ public class PvpCommand implements CommandExecutor
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args)
 	{
 		PvpToggle plugin = PvpToggle.getInstance();
+		PvpManager pvpmanager = plugin.getPvpManager();
+		PvpUtils utils = plugin.getUtils();
 		
 		if(!(sender instanceof Player))
 		{
-			sender.sendMessage(plugin.getMessage("cmd_pvp_console").replace("$player", sender.getName()));
+			sender.sendMessage(utils.getMessage("cmd_pvp_console").replace("$player", sender.getName()));
 			return false;
 		}
 		
@@ -27,43 +31,43 @@ public class PvpCommand implements CommandExecutor
 		{	
 			if(args[0].equalsIgnoreCase("help"))
 			{
-				sender.sendMessage(plugin.getMessage("cmd_pvp_usage").replace("$player", sender.getName()));
+				sender.sendMessage(utils.getMessage("cmd_pvp_usage").replace("$player", sender.getName()));
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("on"))
 			{
-				plugin.setPvp(player.getUniqueId(), true);
-				player.sendMessage(plugin.getMessage("cmd_pvp_enable").replace("$player", player.getName()));
+				pvpmanager.setPvp(player.getUniqueId(), true);
+				player.sendMessage(utils.getMessage("cmd_pvp_enable").replace("$player", player.getName()));
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("off"))
 			{
-				plugin.setPvp(player.getUniqueId(), false);
-				player.sendMessage(plugin.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
+				pvpmanager.setPvp(player.getUniqueId(), false);
+				player.sendMessage(utils.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("status"))
 			{
-				if(plugin.getPvp(player.getUniqueId()))
+				if(pvpmanager.getPvp(player.getUniqueId()))
 				{
-					player.sendMessage(plugin.getMessage("cmd_pvp_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvp_status_enable"));
+					player.sendMessage(utils.getMessage("cmd_pvp_status").replace("$player", player.getName()) + utils.getMessage("cmd_pvp_status_enable"));
 					return true;
 				}
-				else if(!plugin.getPvp(player.getUniqueId()))
+				else if(!pvpmanager.getPvp(player.getUniqueId()))
 				{
-					player.sendMessage(plugin.getMessage("cmd_pvp_status").replace("$player", player.getName()) + plugin.getMessage("cmd_pvp_status_disable"));
+					player.sendMessage(utils.getMessage("cmd_pvp_status").replace("$player", player.getName()) + utils.getMessage("cmd_pvp_status_disable"));
 					return true;
 				}
 			}
 			else
 			{
-				player.sendMessage(plugin.getMessage("cmd_pvp_usage").replace("$player", player.getName()));
+				player.sendMessage(utils.getMessage("cmd_pvp_usage").replace("$player", player.getName()));
 				return false;
 			}
 		}
 		else
 		{
-			player.sendMessage(plugin.getMessage("cmd_pvp_usage").replace("$player", player.getName()));
+			player.sendMessage(utils.getMessage("cmd_pvp_usage").replace("$player", player.getName()));
 			return false;
 		}
 		
