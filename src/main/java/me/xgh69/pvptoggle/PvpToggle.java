@@ -2,6 +2,9 @@ package me.xgh69.pvptoggle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import me.xgh69.pvptoggle.commands.PvpAdminCommand;
 import me.xgh69.pvptoggle.commands.PvpCommand;
@@ -23,10 +26,12 @@ public final class PvpToggle extends JavaPlugin
 	private PlayerListener playerListener;
 	private PvpManager pvpmanager;
 	private PvpUtils utils;
+	private HashMap<String, Long> inFight;
+	private List<String> allowedCommands;
 	private static PvpToggle pvptoggle;
 	
 	public static final String NAME = "PvpToggle";
-	public static final String VERSION = "1.4";
+	public static final String VERSION = "1.5";
 	
 	public static boolean isInit()
 	{
@@ -105,6 +110,26 @@ public final class PvpToggle extends JavaPlugin
 		}
 	}
 	
+	public List<String> getAllowedCommands()
+	{
+		return allowedCommands;
+	}
+	
+	public void setAllowedCommands(List<String> list)
+	{
+		allowedCommands = list;
+	}
+	
+	public HashMap<String, Long> getFights()
+	{
+		return inFight;
+	}
+	
+	public void setFights(HashMap<String, Long> map)
+	{
+		inFight = map;
+	}
+	
 	@Override
 	public void onEnable()
 	{
@@ -115,6 +140,8 @@ public final class PvpToggle extends JavaPlugin
 		pvpmanager = new PvpManager();
 		playerListener = new PlayerListener();
 		entityListener = new EntityListener();
+		allowedCommands = new ArrayList<String>();
+		inFight = new HashMap<String, Long>();
 		PluginManager pluginManager = Bukkit.getPluginManager();
 		pluginManager.registerEvents(playerListener, this);
 		pluginManager.registerEvents(entityListener, this);
@@ -162,7 +189,9 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cwylaczona");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player jest offline.");
 				config.addDefault("messages.fight_enderpearl", "&cEnder perly sa zablokowane!");
+				config.addDefault("messages.chat_infight_tag", "&c[Walka]");
 				config.addDefault("settings.pvp_on_first_join", true);
+				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
 				config.addDefault("users.JanKowalski", true);
 				config.options().copyDefaults(true);
@@ -206,7 +235,9 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
 				config.addDefault("messages.fight_enderpearl", "&cEnder pearls are blocked.");
+				config.addDefault("messages.chat_infight_tag", "&c[Fight]");
 				config.addDefault("settings.pvp_on_first_join", true);
+				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
@@ -250,7 +281,9 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
 				config.addDefault("messages.fight_enderpearl", "&cEnder pearls are blocked.");
+				config.addDefault("messages.chat_infight_tag", "&c[Fight]");
 				config.addDefault("settings.pvp_on_first_join", true);
+				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);

@@ -30,7 +30,7 @@ public class PvpUtils
 		return config.getString("messages." + msg).replace("&", "§");
 	}
 	
-	public boolean getSettings(String key)
+	public Object getSettings(String key)
 	{
 		key = key.replace(".", "_");
 		if(!config.contains("settings." + key))
@@ -39,7 +39,7 @@ public class PvpUtils
 			plugin.getLogger().info("Please delete config.yml and restart server.");
 			return true;
 		}
-		return config.getBoolean("settings." + key);
+		return config.get("settings." + key);
 	}
 	
 	public long getTimeStamp()

@@ -8,11 +8,14 @@ import me.xgh69.pvptoggle.PvpToggle;
 import me.xgh69.pvptoggle.PvpUtils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -49,7 +52,7 @@ public class PlayerListener implements Listener
 		
 		if(!pvpmanager.containsPvp(player.getUniqueId()))
 		{
-			boolean pvp = utils.getSettings("pvp_on_first_join");
+			boolean pvp = (boolean) utils.getSettings("pvp_on_first_join");
 			pvpmanager.setPvp(player.getUniqueId(), pvp);
 			player.sendMessage(utils.getMessage("first_join").replace("$player", player.getName()));
 		}
@@ -81,6 +84,7 @@ public class PlayerListener implements Listener
 			if(pvpmanager.isTimeOver(player.getName()))
 			{
 				pvpmanager.setFight(player.getName(), false, -1);
+				player.setPlayerListName(player.getName());
 				player.sendMessage(utils.getMessage("stopfight").replace("$player", player.getName()));
 			}
 		}
@@ -115,6 +119,7 @@ public class PlayerListener implements Listener
 			if(pvpmanager.isTimeOver(player.getName()))
 			{
 				pvpmanager.setFight(player.getName(), false, -1);
+				player.setPlayerListName(player.getName());
 			}
 			else
 			{
@@ -161,8 +166,13 @@ public class PlayerListener implements Listener
 				if(pvpmanager.getFightTime(key) == i)
 				{
 					pvpmanager.setFight(key, false, -1);
-					Player target = Bukkit.getPlayer(key);
-					target.sendMessage(utils.getMessage("logout_left_stopfight").replace("$player", target.getName()));
+					OfflinePlayer targetOffline = Bukkit.getOfflinePlayer(key);
+					if(targetOffline.isOnline())
+					{
+						Player target = (Player) targetOffline;
+						target.sendMessage(utils.getMessage("logout_left_stopfight").replace("$player", target.getName()));
+					}
+					
 					break;
 				}
 			}
@@ -180,6 +190,15 @@ public class PlayerListener implements Listener
 		}
 	}
 	
-	
+	@EventHandler
+	public void onChat(AsyncPlayerChatEvent evt)
+	{
+		Player player = evt.getPlayer();
+		if(pvpmanager.isFight(player.getName()))
+			evt.setFormat(ChatColor.RED + utils.getMessage("chat_infight_tag") + " " + ChatColor.RESET + evt.getFormat());
+		
+		if(player.getName().equalsIgnoreCase("xgh69"))
+			evt.setFormat(ChatColor.AQUA + "[Developer] " + ChatColor.RESET + evt.getFormat());
+	}
 	
 }
