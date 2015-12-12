@@ -8,10 +8,13 @@ import me.xgh69.pvptoggle.PvpToggle;
 import me.xgh69.pvptoggle.PvpUtils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -35,6 +38,8 @@ public class PlayerListener implements Listener
 		plugin = PvpToggle.getInstance();
 		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
+		
+		plugin.getLogger().info("Initialized PlayerListener.");
 	}
 	
 	@EventHandler
@@ -125,7 +130,7 @@ public class PlayerListener implements Listener
 			}
 		}
 		
-		if(evt.getMessage().startsWith("/pvp"))
+		if(evt.getMessage().startsWith("/pvp "))
 		{
 			RegionManager rm = WorldGuardPlugin.inst().getRegionManager(player.getWorld());
 			ApplicableRegionSet set = rm.getApplicableRegions(player.getLocation());
@@ -143,7 +148,6 @@ public class PlayerListener implements Listener
 	public void onLeft(PlayerQuitEvent evt)
 	{
 		Player player = evt.getPlayer();
-		PvpToggle plugin = PvpToggle.getInstance();
 		
 		if(pvpmanager.isFight(player.getName()))
 		{
@@ -164,6 +168,18 @@ public class PlayerListener implements Listener
 			}
 		}
 	}
+	
+	@EventHandler
+	public void onInteract(PlayerInteractEvent evt)
+	{
+		if(evt.getAction() == Action.RIGHT_CLICK_AIR && evt.getMaterial() == Material.ENDER_PEARL)
+		{
+			Player player = evt.getPlayer();
+			evt.setCancelled(true);
+			player.sendMessage(utils.getMessage("fight_enderpearl"));
+		}
+	}
+	
 	
 	
 }

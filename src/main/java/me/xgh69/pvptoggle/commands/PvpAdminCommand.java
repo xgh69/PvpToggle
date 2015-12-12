@@ -14,14 +14,22 @@ import org.bukkit.entity.Player;
 
 public class PvpAdminCommand implements CommandExecutor
 {
-
+	private PvpToggle plugin;
+	private PvpManager pvpmanager;
+	private PvpUtils utils;
+	
+	public PvpAdminCommand()
+	{
+		plugin = PvpToggle.getInstance();
+		pvpmanager = plugin.getPvpManager();
+		utils = plugin.getUtils();
+		
+		plugin.getLogger().info("Initialized PvpAdminCommand executor.");
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		PvpToggle plugin = PvpToggle.getInstance();
-		PvpManager pvpmanager = plugin.getPvpManager();
-		PvpUtils utils = plugin.getUtils();
-		
 		if(!sender.hasPermission("pvptoggle.admin"))
 		{
 			sender.sendMessage(utils.getMessage("cmd_pvpadmin_noperm").replace("$player", sender.getName()));

@@ -4,6 +4,7 @@ import me.xgh69.pvptoggle.PvpManager;
 import me.xgh69.pvptoggle.PvpToggle;
 import me.xgh69.pvptoggle.PvpUtils;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,6 +28,8 @@ public class EntityListener implements Listener
 		plugin = PvpToggle.getInstance();
 		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
+		
+		plugin.getLogger().info("Initialized EntityListener.");
 	}
 	
 	@EventHandler
@@ -38,6 +41,10 @@ public class EntityListener implements Listener
 		
 		final Player victim = (Player) evt.getEntity();
 		final Player damager = (Player) evt.getDamager();
+		victim.setFlying(false);
+		damager.setFlying(false);
+		victim.setGameMode(GameMode.SURVIVAL);
+		damager.setGameMode(GameMode.SURVIVAL);
 		RegionManager rm = WorldGuardPlugin.inst().getRegionManager(damager.getWorld());
 		ApplicableRegionSet set = rm.getApplicableRegions(victim.getLocation());
 		
@@ -64,12 +71,9 @@ public class EntityListener implements Listener
 				if(!pvpmanager.isFight(damager.getName()))
 					damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 				
-				if(!pvpmanager.isFight(victim.getName()) && !pvpmanager.isFight(damager.getName()))
-				{
-					long time = plugin.getTimeStamp();
-					pvpmanager.setFight(victim.getName(), true, time);
-					pvpmanager.setFight(damager.getName(), true, time);
-				}
+				long time = utils.getTimeStamp();
+				pvpmanager.setFight(damager.getName(), true, time);
+				pvpmanager.setFight(victim.getName(), true, time);
 				return;
 			}
 		}
@@ -81,7 +85,7 @@ public class EntityListener implements Listener
 			
 			if(!pvpmanager.isFight(damager.getName()))
 				damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
-			long time = plugin.getTimeStamp();
+			long time = utils.getTimeStamp();
 			pvpmanager.setFight(damager.getName(), true, time);
 			pvpmanager.setFight(victim.getName(), true, time);
 			return;

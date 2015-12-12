@@ -1,5 +1,8 @@
 package me.xgh69.pvptoggle;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -37,5 +40,16 @@ public class PvpUtils
 			return true;
 		}
 		return config.getBoolean("settings." + key);
+	}
+	
+	public long getTimeStamp()
+	{
+		Date date = new Date();
+		long now = Integer.parseInt((new SimpleDateFormat("HH")).format(date)) * 60 * 60 * 60;
+		now += Integer.parseInt((new SimpleDateFormat("mm")).format(date)) * 60 * 60;
+		now += Integer.parseInt((new SimpleDateFormat("ss")).format(date)) * 60; 
+		now += Integer.parseInt((new SimpleDateFormat("SS")).format(date));
+		
+		return now;
 	}
 }

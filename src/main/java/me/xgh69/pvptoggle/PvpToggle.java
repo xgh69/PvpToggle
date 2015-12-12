@@ -2,8 +2,6 @@ package me.xgh69.pvptoggle;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import me.xgh69.pvptoggle.commands.PvpAdminCommand;
 import me.xgh69.pvptoggle.commands.PvpCommand;
@@ -28,7 +26,26 @@ public final class PvpToggle extends JavaPlugin
 	private static PvpToggle pvptoggle;
 	
 	public static final String NAME = "PvpToggle";
-	public static final String VERSION = "1.3-SNAPSHOT";
+	public static final String VERSION = "1.4";
+	
+	public static boolean isInit()
+	{
+		PluginManager pluginManager = Bukkit.getPluginManager();
+		Plugin pvpToggle = pluginManager.getPlugin("PvpToggle");
+		if(pvpToggle == null)
+			return false;
+		return true;
+	}
+	
+	public static boolean checkDepends()
+	{
+		PluginManager pluginManager = Bukkit.getPluginManager();
+		Plugin worldEdit = pluginManager.getPlugin("WorldEdit");
+		Plugin worldGuard = pluginManager.getPlugin("WorldGuard");
+		if(worldEdit == null || worldGuard == null)
+			return false;
+		return true;
+	}
 	
 	public static PvpToggle getInstance()
 	{
@@ -71,16 +88,6 @@ public final class PvpToggle extends JavaPlugin
 		return lang;
 	}
 	
-	public boolean checkDepends()
-	{
-		PluginManager pluginManager = Bukkit.getPluginManager();
-		Plugin worldEdit = pluginManager.getPlugin("WorldEdit");
-		Plugin worldGuard = pluginManager.getPlugin("WorldGuard");
-		if(worldEdit == null || worldGuard == null)
-			return false;
-		return true;
-	}
-	
 	@Override
 	public void onLoad()
 	{
@@ -108,8 +115,9 @@ public final class PvpToggle extends JavaPlugin
 		pvpmanager = new PvpManager();
 		playerListener = new PlayerListener();
 		entityListener = new EntityListener();
-		Bukkit.getPluginManager().registerEvents(playerListener, this);
-		Bukkit.getPluginManager().registerEvents(entityListener, this);
+		PluginManager pluginManager = Bukkit.getPluginManager();
+		pluginManager.registerEvents(playerListener, this);
+		pluginManager.registerEvents(entityListener, this);
 		getCommand("pvp").setExecutor(new PvpCommand());
 		getCommand("pvpadmin").setExecutor(new PvpAdminCommand());
 		pvpmanager.addAllowedCommand("/pvp status");
@@ -153,6 +161,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&awlaczona");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cwylaczona");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player jest offline.");
+				config.addDefault("messages.fight_enderpearl", "&cEnder perly sa zablokowane!");
 				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JanKowalski", true);
@@ -196,6 +205,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&aenabled");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
+				config.addDefault("messages.fight_enderpearl", "&cEnder pearls are blocked.");
 				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
@@ -239,6 +249,7 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_status_enable", "&aenabled");
 				config.addDefault("messages.cmd_pvpadmin_status_disable", "&cdisabled");
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
+				config.addDefault("messages.fight_enderpearl", "&cEnder pearls are blocked.");
 				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
@@ -253,17 +264,6 @@ public final class PvpToggle extends JavaPlugin
 		}
 		
 		reloadConfig();
-	}
-	
-	public long getTimeStamp()
-	{
-		Date date = new Date();
-		long now = Integer.parseInt((new SimpleDateFormat("HH")).format(date)) * 60 * 60 * 60;
-		now += Integer.parseInt((new SimpleDateFormat("mm")).format(date)) * 60 * 60;
-		now += Integer.parseInt((new SimpleDateFormat("ss")).format(date)) * 60; 
-		now += Integer.parseInt((new SimpleDateFormat("SS")).format(date));
-		
-		return now;
 	}
 
 }

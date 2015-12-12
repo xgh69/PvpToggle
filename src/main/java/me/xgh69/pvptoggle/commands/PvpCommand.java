@@ -11,14 +11,23 @@ import org.bukkit.entity.Player;
 
 @SuppressWarnings("unused")
 public class PvpCommand implements CommandExecutor
-{	
+{
+	private PvpToggle plugin;
+	private PvpManager pvpmanager;
+	private PvpUtils utils;
+	
+	public PvpCommand()
+	{
+		plugin = PvpToggle.getInstance();
+		pvpmanager = plugin.getPvpManager();
+		utils = plugin.getUtils();
+		
+		plugin.getLogger().info("Initialized PvpCommand executor.");
+	}
+	
 	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args)
 	{
-		PvpToggle plugin = PvpToggle.getInstance();
-		PvpManager pvpmanager = plugin.getPvpManager();
-		PvpUtils utils = plugin.getUtils();
-		
 		if(!(sender instanceof Player))
 		{
 			sender.sendMessage(utils.getMessage("cmd_pvp_console").replace("$player", sender.getName()));
