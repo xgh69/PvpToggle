@@ -74,8 +74,8 @@ public class EntityListener implements Listener
 					damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 				
 				long time = utils.getTimeStamp();
-				pvpmanager.setFight(damager.getName(), true, time);
-				pvpmanager.setFight(victim.getName(), true, time);
+				pvpmanager.addFight(damager.getName(), time);
+				pvpmanager.addFight(victim.getName(), time);
 				return;
 			}
 		}
@@ -88,8 +88,8 @@ public class EntityListener implements Listener
 			if(!pvpmanager.isFight(damager.getName()))
 				damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 			long time = utils.getTimeStamp();
-			pvpmanager.setFight(damager.getName(), true, time);
-			pvpmanager.setFight(victim.getName(), true, time);
+			pvpmanager.addFight(damager.getName(), time);
+			pvpmanager.addFight(victim.getName(), time);
 			return;
 		}
 	}

@@ -1,7 +1,10 @@
 package me.xgh69.pvptoggle;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -37,7 +40,7 @@ public class PvpUtils
 		{
 			plugin.getLogger().info("Not found settings \"" + key + "\" in config.yml!");
 			plugin.getLogger().info("Please delete config.yml and restart server.");
-			return true;
+			return null;
 		}
 		return config.get("settings." + key);
 	}

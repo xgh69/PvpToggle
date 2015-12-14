@@ -2,9 +2,6 @@ package me.xgh69.pvptoggle;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import me.xgh69.pvptoggle.commands.PvpAdminCommand;
 import me.xgh69.pvptoggle.commands.PvpCommand;
@@ -26,12 +23,10 @@ public final class PvpToggle extends JavaPlugin
 	private PlayerListener playerListener;
 	private PvpManager pvpmanager;
 	private PvpUtils utils;
-	private HashMap<String, Long> inFight;
-	private List<String> allowedCommands;
 	private static PvpToggle pvptoggle;
 	
 	public static final String NAME = "PvpToggle";
-	public static final String VERSION = "1.5";
+	public static final String VERSION = "1.6";
 	
 	public static boolean isInit()
 	{
@@ -110,26 +105,6 @@ public final class PvpToggle extends JavaPlugin
 		}
 	}
 	
-	public List<String> getAllowedCommands()
-	{
-		return allowedCommands;
-	}
-	
-	public void setAllowedCommands(List<String> list)
-	{
-		allowedCommands = list;
-	}
-	
-	public HashMap<String, Long> getFights()
-	{
-		return inFight;
-	}
-	
-	public void setFights(HashMap<String, Long> map)
-	{
-		inFight = map;
-	}
-	
 	@Override
 	public void onEnable()
 	{
@@ -140,8 +115,6 @@ public final class PvpToggle extends JavaPlugin
 		pvpmanager = new PvpManager();
 		playerListener = new PlayerListener();
 		entityListener = new EntityListener();
-		allowedCommands = new ArrayList<String>();
-		inFight = new HashMap<String, Long>();
 		PluginManager pluginManager = Bukkit.getPluginManager();
 		pluginManager.registerEvents(playerListener, this);
 		pluginManager.registerEvents(entityListener, this);

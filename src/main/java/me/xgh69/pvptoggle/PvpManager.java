@@ -1,5 +1,6 @@
 package me.xgh69.pvptoggle;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -12,11 +13,15 @@ public class PvpManager
 {
 	private PvpToggle plugin;
 	private PvpUtils utils;
+	private HashMap<String, Long> inFight;
+	private List<String> allowedCommands;
 	
 	public PvpManager()
 	{
 		plugin = PvpToggle.getInstance();
 		utils = plugin.getUtils();
+		inFight = new HashMap<String, Long>();
+		allowedCommands = new ArrayList<String>();
 	}
 	
 	public boolean containsPvp(UUID uid)
@@ -47,55 +52,39 @@ public class PvpManager
 	
 	public boolean isAllowedCommand(String commandName)
 	{
-		return plugin.getAllowedCommands().contains(commandName);
+		return allowedCommands.contains(commandName);
 	}
 	
 	public void addAllowedCommand(String commandName)
 	{
-		plugin.getAllowedCommands().add(commandName);
+		allowedCommands.add(commandName);
 	}
 	
-	public void setFight(String playerName, boolean fight, long time)
+	public void addFight(String playerName, long time)
 	{
-		HashMap<String, Long> fight_temp = plugin.getFights();
-		
-		if(time < 0 && fight)
-			time = utils.getTimeStamp();
-		
-		if(fight)
-		{
-			if(isFight(playerName))
-			{
-				fight_temp.remove(playerName);
-			}
-		}
-		
-		if(fight)
-		{
-			fight_temp.put(playerName, time);
-		}
-		else if(!fight && isFight(playerName))
-		{
-			fight_temp.remove(playerName);
-		}
-		
-		plugin.setFights(fight_temp);
+		inFight.put(playerName, time);
+	}
+	
+	public void removeFight(String playerName)
+	{
+		if(inFight.containsKey(playerName))
+			inFight.remove(playerName);
 	}
 	
 	public boolean isFight(String playerName)
 	{
-		return plugin.getFights().containsKey(playerName);
+		return inFight.containsKey(playerName);
 	}
 	
 	public long getFightTime(String playerName)
 	{
-		return plugin.getFights().get(playerName);
+		return inFight.get(playerName);
 	}
 	
 	public boolean isTimeOver(String playerName)
 	{
 		int minutes = (int) utils.getSettings("fight_minutes");
-		long i = plugin.getFights().get(playerName);
+		long i = inFight.get(playerName);
 		long j = utils.getTimeStamp();
 		if(i + minutes*60*60 == j || i + minutes*60*60 < j)
 			return true;
@@ -104,6 +93,6 @@ public class PvpManager
 	
 	public List<Object> getPlayersFights()
 	{
-		return Arrays.asList(plugin.getFights().keySet().toArray());
+		return Arrays.asList(inFight.keySet().toArray());
 	}
 }

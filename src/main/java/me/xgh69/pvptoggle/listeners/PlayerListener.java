@@ -60,7 +60,7 @@ public class PlayerListener implements Listener
 		if(pvpmanager.isFight(player.getName()))
 		{
 			player.sendMessage(utils.getMessage("logout_join").replace("$player", player.getName()));
-			pvpmanager.setFight(player.getName(), false, -1);
+			pvpmanager.removeFight(player.getName());
 		}
 		
 		if(pvpmanager.getPvp(player.getUniqueId()))
@@ -83,7 +83,7 @@ public class PlayerListener implements Listener
 		{
 			if(pvpmanager.isTimeOver(player.getName()))
 			{
-				pvpmanager.setFight(player.getName(), false, -1);
+				pvpmanager.removeFight(player.getName());
 				player.setPlayerListName(player.getName());
 				player.sendMessage(utils.getMessage("stopfight").replace("$player", player.getName()));
 			}
@@ -118,7 +118,7 @@ public class PlayerListener implements Listener
 		{
 			if(pvpmanager.isTimeOver(player.getName()))
 			{
-				pvpmanager.setFight(player.getName(), false, -1);
+				pvpmanager.removeFight(player.getName());
 				player.setPlayerListName(player.getName());
 			}
 			else
@@ -165,7 +165,7 @@ public class PlayerListener implements Listener
 				String key = (String) o;
 				if(pvpmanager.getFightTime(key) == i)
 				{
-					pvpmanager.setFight(key, false, -1);
+					pvpmanager.removeFight(player.getName());
 					OfflinePlayer targetOffline = Bukkit.getOfflinePlayer(key);
 					if(targetOffline.isOnline())
 					{
