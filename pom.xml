@@ -20,7 +20,7 @@
     <repository>
       <!-- Spigot & Bukkit repository -->
       <id>spigot-repo</id>
-      <url>http://hub.spigotmc.org/nexus/content/groups/public</url>
+      <url>http://maven.elmakers.com/repository/</url>
     </repository>
     <repository>
       <!-- sk89q's repository -->
@@ -33,6 +33,14 @@
       <!-- Spigot API -->
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
+      <version>${bukkit_ver}</version>
+      <type>jar</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <!-- Spigot -->
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot</artifactId>
       <version>${bukkit_ver}</version>
       <type>jar</type>
       <scope>provided</scope>
@@ -55,7 +63,7 @@
     </dependency>
   </dependencies>
   <properties>
-  	<bukkit_ver>1.8.8-R0.1-SNAPSHOT</bukkit_ver>
+  	<bukkit_ver>1.8-R0.1-SNAPSHOT</bukkit_ver>
   	<worldguard_ver>6.0.0-SNAPSHOT</worldguard_ver>
   	<worldedit_ver>6.0.0-SNAPSHOT</worldedit_ver>
   </properties>
