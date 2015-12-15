@@ -55,12 +55,16 @@ public class PlayerListener implements Listener
 			boolean pvp = (boolean) utils.getSettings("pvp_on_first_join");
 			pvpmanager.setPvp(player.getUniqueId(), pvp);
 			player.sendMessage(utils.getMessage("first_join").replace("$player", player.getName()));
+			if(utils.isDebug())
+				utils.sendDebug("Player " + player.getName() + " pvp protection setting to enabled (first join).");
 		}
 		
 		if(pvpmanager.isFight(player.getName()))
 		{
 			player.sendMessage(utils.getMessage("logout_join").replace("$player", player.getName()));
 			pvpmanager.removeFight(player.getName());
+			if(utils.isDebug())
+				utils.sendDebug("Player " + player.getName() + " is joined after logout in fight.");
 		}
 		
 		if(pvpmanager.getPvp(player.getUniqueId()))
@@ -86,6 +90,8 @@ public class PlayerListener implements Listener
 				pvpmanager.removeFight(player.getName());
 				player.setPlayerListName(player.getName());
 				player.sendMessage(utils.getMessage("stopfight").replace("$player", player.getName()));
+				if(utils.isDebug())
+					utils.sendDebug("Stopped fight with " + player.getName());
 			}
 		}
 		
@@ -120,6 +126,8 @@ public class PlayerListener implements Listener
 			{
 				pvpmanager.removeFight(player.getName());
 				player.setPlayerListName(player.getName());
+				if(utils.isDebug())
+					utils.sendDebug("Stopped fight with " + player.getName());
 			}
 			else
 			{
@@ -173,6 +181,9 @@ public class PlayerListener implements Listener
 						target.sendMessage(utils.getMessage("logout_left_stopfight").replace("$player", target.getName()));
 					}
 					
+					if(utils.isDebug())
+						utils.sendDebug("Stopped fight with logouted player and " + player.getName());
+					
 					break;
 				}
 			}
@@ -182,11 +193,13 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onInteract(PlayerInteractEvent evt)
 	{
-		if(evt.getAction() == Action.RIGHT_CLICK_AIR && evt.getMaterial() == Material.ENDER_PEARL)
+		if(evt.getAction() == Action.RIGHT_CLICK_AIR && evt.getMaterial() == Material.ENDER_PEARL && pvpmanager.isFight(evt.getPlayer().getName()))
 		{
 			Player player = evt.getPlayer();
 			evt.setCancelled(true);
 			player.sendMessage(utils.getMessage("fight_enderpearl"));
+			if(utils.isDebug())
+				utils.sendDebug("Player " + player.getName() + " try use ender pearl in fight.");
 		}
 	}
 	

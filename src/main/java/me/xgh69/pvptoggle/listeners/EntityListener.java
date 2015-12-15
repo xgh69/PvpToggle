@@ -82,11 +82,16 @@ public class EntityListener implements Listener
 		else if(set.getFlag(DefaultFlag.PVP) == State.ALLOW)
 		{
 			evt.setCancelled(false);
+			if(!pvpmanager.isFight(victim.getName()) && !pvpmanager.isFight(damager.getName()) && utils.isDebug())
+				utils.sendDebug("Player " + damager.getName() + " start fight with " + victim.getName());
+			
 			if(!pvpmanager.isFight(victim.getName()))
 				victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
 			
 			if(!pvpmanager.isFight(damager.getName()))
 				damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
+			
+			
 			long time = utils.getTimeStamp();
 			pvpmanager.addFight(damager.getName(), time);
 			pvpmanager.addFight(victim.getName(), time);

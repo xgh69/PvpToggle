@@ -117,6 +117,26 @@ public class PvpAdminCommand implements CommandExecutor
 					return true;
 				}
 			}
+			else if(args[0].equalsIgnoreCase("debug"))
+			{
+				if(args[1].equalsIgnoreCase("enable") || args[1].equalsIgnoreCase("on"))
+				{
+					utils.setDebug(true);
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_debug").replace("$player", sender.getName()) + utils.getMessage("cmd_pvpadmin_debug_enable").replace("$player", sender.getName()));
+					return true;
+				}
+				else if(args[1].equalsIgnoreCase("disable") || args[1].equalsIgnoreCase("off"))
+				{
+					utils.setDebug(false);
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_debug").replace("$player", sender.getName()) + utils.getMessage("cmd_pvpadmin_debug_disable").replace("$player", sender.getName()));
+					return true;
+				}
+				else
+				{
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));
+					return true;
+				}
+			}
 			else
 			{
 				sender.sendMessage(utils.getMessage("cmd_pvpadmin_usage").replace("$player", sender.getName()));

@@ -1,48 +1,66 @@
 package me.xgh69.pvptoggle;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public class PvpUtils
 {
-	private YamlConfiguration config;
 	private PvpToggle plugin;
+	private boolean debug;
 	
 	public PvpUtils()
 	{
 		plugin = PvpToggle.getInstance();
-		config = plugin.getConfig();
+	}
+	
+	public boolean isDebug()
+	{
+		return debug;
+	}
+	
+	public void setDebug(boolean b)
+	{
+		debug = b;
+	}
+	
+	public void sendDebug(String s)
+	{
+		for(Player p : Bukkit.getOnlinePlayers())
+		{
+			if(p.hasPermission("pvptoggle.admin"))
+				p.sendMessage(ChatColor.RED + "[Debug] " + ChatColor.DARK_RED + s);
+		}
+		
+		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Debug] " + ChatColor.DARK_RED + s);
 	}
 	
 	public String getMessage(String msg)
 	{
 		msg = msg.replace(".", "_");
-		if(!config.contains("messages." + msg))
+		if(!plugin.getConfig().contains("messages." + msg))
 		{
-			plugin.getLogger().info("Not found message \"" + msg + "\" in config.yml!");
-			plugin.getLogger().info("Please delete config.yml and restart server.");
-			return ChatColor.RED + "Error in config.yml! Check console log!\n";
+			plugin.getLogger().info("Not found message \"" + msg + "\" in plugin.getConfig().yml!");
+			plugin.getLogger().info("Please delete plugin.getConfig().yml and restart server.");
+			return ChatColor.RED + "Error in plugin.getConfig().yml! Check console log!\n";
 		}
 		
-		return config.getString("messages." + msg).replace("&", "§");
+		return plugin.getConfig().getString("messages." + msg).replace("&", "§");
 	}
 	
 	public Object getSettings(String key)
 	{
 		key = key.replace(".", "_");
-		if(!config.contains("settings." + key))
+		if(!plugin.getConfig().contains("settings." + key))
 		{
-			plugin.getLogger().info("Not found settings \"" + key + "\" in config.yml!");
-			plugin.getLogger().info("Please delete config.yml and restart server.");
+			plugin.getLogger().info("Not found settings \"" + key + "\" in plugin.getConfig().yml!");
+			plugin.getLogger().info("Please delete plugin.getConfig().yml and restart server.");
 			return null;
 		}
-		return config.get("settings." + key);
+		return plugin.getConfig().get("settings." + key);
 	}
 	
 	public long getTimeStamp()

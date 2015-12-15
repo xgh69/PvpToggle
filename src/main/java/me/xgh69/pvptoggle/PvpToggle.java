@@ -26,7 +26,7 @@ public final class PvpToggle extends JavaPlugin
 	private static PvpToggle pvptoggle;
 	
 	public static final String NAME = "PvpToggle";
-	public static final String VERSION = "1.6";
+	public static final String VERSION = "1.7";
 	
 	public static boolean isInit()
 	{
@@ -163,6 +163,9 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player jest offline.");
 				config.addDefault("messages.fight_enderpearl", "&cEnder perly sa zablokowane!");
 				config.addDefault("messages.chat_infight_tag", "&c[Walka]");
+				config.addDefault("messages.cmd_pvpadmin_debug", "&cDebugowanie jest ");
+				config.addDefault("messages.cmd_pvpadmin_debug_enable", "&awlaczone&c.");
+				config.addDefault("messages.cmd_pvpadmin_debug_disable", "&4wylaczone&c.");
 				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
@@ -209,6 +212,9 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
 				config.addDefault("messages.fight_enderpearl", "&cEnder pearls are blocked.");
 				config.addDefault("messages.chat_infight_tag", "&c[Fight]");
+				config.addDefault("messages.cmd_pvpadmin_debug", "&cDebugging is ");
+				config.addDefault("messages.cmd_pvpadmin_debug_enable", "&aenabled&c.");
+				config.addDefault("messages.cmd_pvpadmin_debug_disable", "&4disabled&c.");
 				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
@@ -255,6 +261,9 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_offline", "&c$player is offline.");
 				config.addDefault("messages.fight_enderpearl", "&cEnder pearls are blocked.");
 				config.addDefault("messages.chat_infight_tag", "&c[Fight]");
+				config.addDefault("messages.cmd_pvpadmin_debug", "&cDebugging is ");
+				config.addDefault("messages.cmd_pvpadmin_debug_enable", "&aenabled&c.");
+				config.addDefault("messages.cmd_pvpadmin_debug_disable", "&4disabled&c.");
 				config.addDefault("settings.pvp_on_first_join", true);
 				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
