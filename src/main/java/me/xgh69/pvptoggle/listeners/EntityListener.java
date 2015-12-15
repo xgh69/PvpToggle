@@ -1,8 +1,8 @@
 package me.xgh69.pvptoggle.listeners;
 
-import me.xgh69.pvptoggle.PvpManager;
-import me.xgh69.pvptoggle.PvpToggle;
-import me.xgh69.pvptoggle.PvpUtils;
+import me.xgh69.pvptoggle.main.PvpManager;
+import me.xgh69.pvptoggle.main.PvpToggle;
+import me.xgh69.pvptoggle.main.PvpUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -45,8 +46,6 @@ public class EntityListener implements Listener
 		damager.setFlying(false);
 		victim.setGameMode(GameMode.SURVIVAL);
 		damager.setGameMode(GameMode.SURVIVAL);
-		damager.setPlayerListName(ChatColor.RED + damager.getName());
-		victim.setPlayerListName(ChatColor.RED + victim.getName());
 		RegionManager rm = WorldGuardPlugin.inst().getRegionManager(damager.getWorld());
 		ApplicableRegionSet set = rm.getApplicableRegions(victim.getLocation());
 		

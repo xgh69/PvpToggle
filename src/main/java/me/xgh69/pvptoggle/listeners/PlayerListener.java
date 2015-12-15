@@ -2,15 +2,20 @@ package me.xgh69.pvptoggle.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import me.xgh69.pvptoggle.PvpManager;
-import me.xgh69.pvptoggle.PvpToggle;
-import me.xgh69.pvptoggle.PvpUtils;
+import me.xgh69.pvptoggle.main.PvpManager;
+import me.xgh69.pvptoggle.main.PvpToggle;
+import me.xgh69.pvptoggle.main.PvpUtils;
+import net.minecraft.server.v1_8_R1.ChatSerializer;
+import net.minecraft.server.v1_8_R1.IChatBaseComponent;
+import net.minecraft.server.v1_8_R1.PacketPlayOutChat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +27,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import com.mojang.authlib.GameProfile;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -69,11 +75,21 @@ public class PlayerListener implements Listener
 		
 		if(pvpmanager.getPvp(player.getUniqueId()))
 		{
-			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
+			if((boolean) utils.getSettings("use_packets"))
+			{
+				utils.sendAction(player, utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
+			}
+			else
+				player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
 		}
 		else
 		{
-			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
+			if((boolean) utils.getSettings("use_packets"))
+			{
+				utils.sendAction(player, utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
+			}
+			else
+				player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
 		}
 	}
 	
@@ -156,7 +172,6 @@ public class PlayerListener implements Listener
 		}
 	}
 	
-	@SuppressWarnings({ "deprecation" })
 	@EventHandler
 	public void onLeft(PlayerQuitEvent evt)
 	{
@@ -164,29 +179,8 @@ public class PlayerListener implements Listener
 		
 		if(pvpmanager.isFight(player.getName()))
 		{
-			long i = pvpmanager.getFightTime(player.getName());
 			Bukkit.broadcastMessage(utils.getMessage("logout_left").replace("$player", player.getName()));
 			player.setHealth(0.00D);
-			
-			for(Object o : pvpmanager.getPlayersFights())
-			{
-				String key = (String) o;
-				if(pvpmanager.getFightTime(key) == i)
-				{
-					pvpmanager.removeFight(player.getName());
-					OfflinePlayer targetOffline = Bukkit.getOfflinePlayer(key);
-					if(targetOffline.isOnline())
-					{
-						Player target = (Player) targetOffline;
-						target.sendMessage(utils.getMessage("logout_left_stopfight").replace("$player", target.getName()));
-					}
-					
-					if(utils.isDebug())
-						utils.sendDebug("Stopped fight with logouted player and " + player.getName());
-					
-					break;
-				}
-			}
 		}
 	}
 	
@@ -207,6 +201,7 @@ public class PlayerListener implements Listener
 	public void onChat(AsyncPlayerChatEvent evt)
 	{
 		Player player = evt.getPlayer();
+		
 		if(pvpmanager.isFight(player.getName()))
 			evt.setFormat(ChatColor.RED + utils.getMessage("chat_infight_tag") + " " + ChatColor.RESET + evt.getFormat());
 		

@@ -1,6 +1,6 @@
 name: PvpToggle
-main: me.xgh69.pvptoggle.PvpToggle
-version: 1.7
+main: me.xgh69.pvptoggle.main.PvpToggle
+version: 1.8
 author: xgh69
 commands:
   pvp:

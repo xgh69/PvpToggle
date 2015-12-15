@@ -1,8 +1,8 @@
 package me.xgh69.pvptoggle.commands;
 
-import me.xgh69.pvptoggle.PvpManager;
-import me.xgh69.pvptoggle.PvpToggle;
-import me.xgh69.pvptoggle.PvpUtils;
+import me.xgh69.pvptoggle.main.PvpManager;
+import me.xgh69.pvptoggle.main.PvpToggle;
+import me.xgh69.pvptoggle.main.PvpUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
