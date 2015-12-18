@@ -69,7 +69,8 @@ public class PvpAdminCommand implements CommandExecutor
 				{
 					Player player = (Player) offlinePlayer;
 					pvpmanager.setPvp(player.getUniqueId(), true);
-					sender.sendMessage(utils.getMessage("cmd_pvpadmin_enable").replace("$player", player.getName()));
+					player.sendMessage(utils.getMessage("cmd_pvp_enable").replace("$player", player.getName()));					
+					sender.sendMessage(utils.getMessage("cmd_pvpadmin_disable").replace("$player", player.getName()));
 					return true;
 				}
 				else
@@ -85,6 +86,8 @@ public class PvpAdminCommand implements CommandExecutor
 				{
 					Player player = (Player) offlinePlayer;
 					pvpmanager.setPvp(player.getUniqueId(), false);
+					
+					player.sendMessage(utils.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
 					sender.sendMessage(utils.getMessage("cmd_pvpadmin_disable").replace("$player", player.getName()));
 					return true;
 				}

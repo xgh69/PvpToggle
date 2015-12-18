@@ -4,7 +4,6 @@ import me.xgh69.pvptoggle.main.PvpManager;
 import me.xgh69.pvptoggle.main.PvpToggle;
 import me.xgh69.pvptoggle.main.PvpUtils;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -1,7 +1,6 @@
 package me.xgh69.pvptoggle.main;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -62,6 +61,9 @@ public class PvpManager
 	
 	public void addFight(String playerName, long time)
 	{
+		if(inFight.containsKey(playerName))
+			inFight.remove(playerName);
+		
 		inFight.put(playerName, time);
 	}
 	
@@ -86,13 +88,8 @@ public class PvpManager
 		int minutes = (int) utils.getSettings("fight_minutes");
 		long i = inFight.get(playerName);
 		long j = utils.getTimeStamp();
-		if(i + minutes*60*60 == j || i + minutes*60*60 < j)
+		if(i + minutes*60*1000 == j || j > i + minutes*60*1000)
 			return true;
 		return false;
-	}
-	
-	public List<Object> getPlayersFights()
-	{
-		return Arrays.asList(inFight.keySet().toArray());
 	}
 }

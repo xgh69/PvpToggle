@@ -1,24 +1,8 @@
 package me.xgh69.pvptoggle.main;
 
-import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
-
-import net.minecraft.server.v1_8_R1.ChatSerializer;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.IChatBaseComponent;
-import net.minecraft.server.v1_8_R1.PacketPlayOutChat;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-
-import com.mojang.authlib.GameProfile;
 
 public class PvpUtils
 {
@@ -28,6 +12,7 @@ public class PvpUtils
 	public PvpUtils()
 	{
 		plugin = PvpToggle.getInstance();
+		debug = false;
 	}
 	
 	public boolean isDebug()
@@ -45,22 +30,22 @@ public class PvpUtils
 		for(Player p : Bukkit.getOnlinePlayers())
 		{
 			if(p.hasPermission("pvptoggle.admin"))
-				p.sendMessage(ChatColor.RED + "[Debug] " + ChatColor.DARK_RED + s);
+				p.sendMessage(ChatColor.RED + "[PvpToggle Debug] " + ChatColor.DARK_RED + s);
 		}
 		
 		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[PvpToggle Debug] " + ChatColor.DARK_RED + s);
 	}
 	
-	public void sendAction(Player p, String s)
+	/* public void sendBar(PlayerConnection p, String s)
 	{
 		IChatBaseComponent message = ChatSerializer.a("{\"text\":\"" + s + " \"}");
-		PacketPlayOutChat packet = new PacketPlayOutChat(message, (byte) 2);
-		((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
-	}
+		PacketPlayOutChat bar_packet = new PacketPlayOutChat(message, (byte) 2);
+		p.sendPacket(bar_packet);
+	} */
 	
 	public void logError(String s)
 	{
-		Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "[PvpToggle] " + ChatColor.RESET + s);
+		Bukkit.getConsoleSender().sendMessage("[PvpToggle] " + ChatColor.DARK_RED + s);
 	}
 	
 	public String getMessage(String msg)
@@ -81,8 +66,8 @@ public class PvpUtils
 		key = key.replace(".", "_");
 		if(!plugin.getConfig().contains("settings." + key))
 		{
-			plugin.getLogger().info("Not found settings \"" + key + "\" in plugin.getConfig().yml!");
-			plugin.getLogger().info("Please delete plugin.getConfig().yml and restart server.");
+			plugin.getLogger().info("Not found settings \"" + key + "\" in config.yml!");
+			plugin.getLogger().info("Please delete config.yml and restart server.");
 			return null;
 		}
 		return plugin.getConfig().get("settings." + key);
@@ -90,12 +75,6 @@ public class PvpUtils
 	
 	public long getTimeStamp()
 	{
-		Date date = new Date();
-		long now = Integer.parseInt((new SimpleDateFormat("HH")).format(date)) * 60 * 60 * 60;
-		now += Integer.parseInt((new SimpleDateFormat("mm")).format(date)) * 60 * 60;
-		now += Integer.parseInt((new SimpleDateFormat("ss")).format(date)) * 60; 
-		now += Integer.parseInt((new SimpleDateFormat("SS")).format(date));
-		
-		return now;
+		return System.currentTimeMillis();
 	}
 }

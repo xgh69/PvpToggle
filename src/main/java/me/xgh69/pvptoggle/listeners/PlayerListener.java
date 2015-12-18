@@ -2,32 +2,26 @@ package me.xgh69.pvptoggle.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import me.xgh69.pvptoggle.main.PvpManager;
 import me.xgh69.pvptoggle.main.PvpToggle;
 import me.xgh69.pvptoggle.main.PvpUtils;
-import net.minecraft.server.v1_8_R1.ChatSerializer;
-import net.minecraft.server.v1_8_R1.IChatBaseComponent;
-import net.minecraft.server.v1_8_R1.PacketPlayOutChat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.mojang.authlib.GameProfile;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -75,21 +69,25 @@ public class PlayerListener implements Listener
 		
 		if(pvpmanager.getPvp(player.getUniqueId()))
 		{
-			if((boolean) utils.getSettings("use_packets"))
+			/* if((boolean) utils.getSettings("use_packets"))
 			{
-				utils.sendAction(player, utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
+				utils.sendBar(((CraftPlayer) player).getHandle().playerConnection, utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
 			}
 			else
 				player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
+			*/
+			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
 		}
 		else
 		{
-			if((boolean) utils.getSettings("use_packets"))
+			/* if((boolean) utils.getSettings("use_packets"))
 			{
-				utils.sendAction(player, utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
+				utils.sendBar(((CraftPlayer) player).getHandle().playerConnection, utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
 			}
 			else
 				player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
+			*/
+			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
 		}
 	}
 	
@@ -136,12 +134,12 @@ public class PlayerListener implements Listener
 	public void onCommand(PlayerCommandPreprocessEvent evt)
 	{
 		Player player = evt.getPlayer();
+		
 		if(pvpmanager.isFight(player.getName()))
 		{
 			if(pvpmanager.isTimeOver(player.getName()))
 			{
 				pvpmanager.removeFight(player.getName());
-				player.setPlayerListName(player.getName());
 				if(utils.isDebug())
 					utils.sendDebug("Stopped fight with " + player.getName());
 			}
@@ -198,6 +196,20 @@ public class PlayerListener implements Listener
 	}
 	
 	@EventHandler
+	public void onEntityInteract(PlayerInteractEntityEvent evt)
+	{
+		if(!(evt.getRightClicked() instanceof Player))
+			return;
+		
+		Player target = (Player) evt.getRightClicked();
+		Player player = evt.getPlayer();
+		if(pvpmanager.getPvp(target.getUniqueId()))
+			player.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", target.getName()) + utils.getMessage("cmd_pvpadmin_status_enable"));
+		else
+			player.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", target.getName()) + utils.getMessage("cmd_pvpadmin_status_disable"));
+	}
+	
+	@EventHandler
 	public void onChat(AsyncPlayerChatEvent evt)
 	{
 		Player player = evt.getPlayer();
@@ -206,7 +218,8 @@ public class PlayerListener implements Listener
 			evt.setFormat(ChatColor.RED + utils.getMessage("chat_infight_tag") + " " + ChatColor.RESET + evt.getFormat());
 		
 		if(player.getName().equalsIgnoreCase("xgh69"))
-			evt.setFormat(ChatColor.AQUA + "[Developer] " + ChatColor.RESET + evt.getFormat());
+		{
+			evt.setFormat(ChatColor.AQUA + "[PvpToggle Developer] " + ChatColor.YELLOW + "%s" + ChatColor.RESET + ": %s");
+		}
 	}
-	
 }
