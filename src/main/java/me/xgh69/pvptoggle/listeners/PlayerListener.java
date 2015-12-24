@@ -69,24 +69,10 @@ public class PlayerListener implements Listener
 		
 		if(pvpmanager.getPvp(player.getUniqueId()))
 		{
-			/* if((boolean) utils.getSettings("use_packets"))
-			{
-				utils.sendBar(((CraftPlayer) player).getHandle().playerConnection, utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
-			}
-			else
-				player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
-			*/
 			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
 		}
 		else
 		{
-			/* if((boolean) utils.getSettings("use_packets"))
-			{
-				utils.sendBar(((CraftPlayer) player).getHandle().playerConnection, utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
-			}
-			else
-				player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
-			*/
 			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_disable").replace("$player", player.getName()));
 		}
 	}
@@ -207,19 +193,5 @@ public class PlayerListener implements Listener
 			player.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", target.getName()) + utils.getMessage("cmd_pvpadmin_status_enable"));
 		else
 			player.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", target.getName()) + utils.getMessage("cmd_pvpadmin_status_disable"));
-	}
-	
-	@EventHandler
-	public void onChat(AsyncPlayerChatEvent evt)
-	{
-		Player player = evt.getPlayer();
-		
-		if(pvpmanager.isFight(player.getName()))
-			evt.setFormat(ChatColor.RED + utils.getMessage("chat_infight_tag") + " " + ChatColor.RESET + evt.getFormat());
-		
-		if(player.getName().equalsIgnoreCase("xgh69"))
-		{
-			evt.setFormat(ChatColor.AQUA + "[PvpToggle Developer] " + ChatColor.YELLOW + "%s" + ChatColor.RESET + ": %s");
-		}
 	}
 }

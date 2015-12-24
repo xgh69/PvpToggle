@@ -35,11 +35,8 @@ public class PvpManager
 	public boolean getPvp(UUID uid)
 	{
 		plugin.reloadConfig();
-		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uid);
 		if(!containsPvp(uid))
 			return true;
-		if(plugin.getConfig().contains("users." + offlinePlayer.getName()))
-			return plugin.getConfig().getBoolean("users." + offlinePlayer.getName());
 		return plugin.getConfig().getBoolean("users." + uid.toString());
 	}
 	

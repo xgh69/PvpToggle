@@ -2,6 +2,8 @@ package me.xgh69.pvptoggle.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.xgh69.pvptoggle.commands.PvpAdminCommand;
 import me.xgh69.pvptoggle.commands.PvpCommand;
@@ -11,7 +13,6 @@ import me.xgh69.pvptoggle.listeners.PlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.Main;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +29,7 @@ public final class PvpToggle extends JavaPlugin
 	private static PvpToggle pvptoggle;
 	
 	public static final String NAME = "PvpToggle";
-	public static final String VERSION = "1.9";
+	public static final String VERSION = "2.0";
 	
 	public static boolean isInit()
 	{
@@ -42,10 +43,19 @@ public final class PvpToggle extends JavaPlugin
 	public static boolean checkDepends()
 	{
 		PluginManager pluginManager = Bukkit.getPluginManager();
-		Plugin worldEdit = pluginManager.getPlugin("WorldEdit");
-		Plugin worldGuard = pluginManager.getPlugin("WorldGuard");
-		if(worldEdit == null || worldGuard == null)
-			return false;
+		List<Plugin> depends = new ArrayList<Plugin>();
+		
+		depends.add(pluginManager.getPlugin("WorldEdit"));
+		depends.add(pluginManager.getPlugin("WorldGuard"));
+		
+		for(Plugin p : depends)
+		{
+			if(p == null)
+			{
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	
@@ -170,10 +180,9 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_debug_enable", "&awlaczone&c.");
 				config.addDefault("messages.cmd_pvpadmin_debug_disable", "&4wylaczone&c.");
 				config.addDefault("settings.pvp_on_first_join", true);
-				//config.addDefault("settings.use_packets", false);
+				config.addDefault("settings.use_packets", false);
 				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
-				config.addDefault("users.JanKowalski", true);
 				config.options().copyDefaults(true);
 				
 				saveConfig();
@@ -219,10 +228,8 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_debug_enable", "&aenabled&c.");
 				config.addDefault("messages.cmd_pvpadmin_debug_disable", "&4disabled&c.");
 				config.addDefault("settings.pvp_on_first_join", true);
-				config.addDefault("settings.use_packets", false);
 				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
-				config.addDefault("users.JohnDoo", true);
 				config.options().copyDefaults(true);
 				
 				saveConfig();
@@ -268,7 +275,6 @@ public final class PvpToggle extends JavaPlugin
 				config.addDefault("messages.cmd_pvpadmin_debug_enable", "&aenabled&c.");
 				config.addDefault("messages.cmd_pvpadmin_debug_disable", "&4disabled&c.");
 				config.addDefault("settings.pvp_on_first_join", true);
-				config.addDefault("settings.use_packets", false);
 				config.addDefault("settings.fight_minutes", 1);
 				config.addDefault("users", "");
 				config.addDefault("users.JohnDoo", true);
@@ -280,11 +286,6 @@ public final class PvpToggle extends JavaPlugin
 		else
 		{
 			getLogger().info("Found file: " + configFile.getPath());
-		}
-		
-		if((boolean) utils.getSettings("use_packets"))
-		{
-			getLogger().info("To use packets, please download source from github, uncomment code from PvpUtils and PlayerListener and compile it using maven.");
 		}
 		
 		reloadConfig();

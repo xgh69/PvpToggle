@@ -36,16 +36,9 @@ public class PvpUtils
 		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[PvpToggle Debug] " + ChatColor.DARK_RED + s);
 	}
 	
-	/* public void sendBar(PlayerConnection p, String s)
-	{
-		IChatBaseComponent message = ChatSerializer.a("{\"text\":\"" + s + " \"}");
-		PacketPlayOutChat bar_packet = new PacketPlayOutChat(message, (byte) 2);
-		p.sendPacket(bar_packet);
-	} */
-	
 	public void logError(String s)
 	{
-		Bukkit.getConsoleSender().sendMessage("[PvpToggle] " + ChatColor.DARK_RED + s);
+		Bukkit.getConsoleSender().sendMessage("[PvpToggle] " + ChatColor.RED + s);
 	}
 	
 	public String getMessage(String msg)

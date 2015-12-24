@@ -5,6 +5,7 @@ import me.xgh69.pvptoggle.main.PvpToggle;
 import me.xgh69.pvptoggle.main.PvpUtils;
 
 import org.bukkit.GameMode;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,6 +42,75 @@ public class EntityListener implements Listener
 		
 		final Player victim = (Player) evt.getEntity();
 		final Player damager = (Player) evt.getDamager();
+		victim.setFlying(false);
+		damager.setFlying(false);
+		victim.setGameMode(GameMode.SURVIVAL);
+		damager.setGameMode(GameMode.SURVIVAL);
+		RegionManager rm = WorldGuardPlugin.inst().getRegionManager(damager.getWorld());
+		ApplicableRegionSet set = rm.getApplicableRegions(victim.getLocation());
+		
+		if(set.getFlag(DefaultFlag.PVP) != State.ALLOW)
+		{
+			if(set.getFlag(DefaultFlag.PVP) == State.DENY)
+			{
+				evt.setCancelled(true);
+				return;
+			}
+			
+			if(pvpmanager.getPvp(victim.getUniqueId()) || pvpmanager.getPvp(damager.getUniqueId()))
+			{
+				damager.sendMessage(utils.getMessage("player_protected").replace("$player", victim.getName()));
+				evt.setCancelled(true);
+				return;
+			}
+			else
+			{
+				evt.setCancelled(false);
+				if(!pvpmanager.isFight(victim.getName()))
+					victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
+				
+				if(!pvpmanager.isFight(damager.getName()))
+					damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
+				
+				long time = utils.getTimeStamp();
+				pvpmanager.addFight(damager.getName(), time);
+				pvpmanager.addFight(victim.getName(), time);
+				return;
+			}
+		}
+		else if(set.getFlag(DefaultFlag.PVP) == State.ALLOW)
+		{
+			evt.setCancelled(false);
+			if(!pvpmanager.isFight(victim.getName()) && !pvpmanager.isFight(damager.getName()) && utils.isDebug())
+				utils.sendDebug("Player " + damager.getName() + " start fight with " + victim.getName());
+			
+			if(!pvpmanager.isFight(victim.getName()))
+				victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
+			
+			if(!pvpmanager.isFight(damager.getName()))
+				damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
+			
+			
+			long time = utils.getTimeStamp();
+			pvpmanager.addFight(damager.getName(), time);
+			pvpmanager.addFight(victim.getName(), time);
+			return;
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	@EventHandler
+	public void onShoot(EntityDamageByEntityEvent evt)
+	{
+		if(!(evt.getDamager() instanceof Arrow) || !(evt.getEntity() instanceof Player))
+			return;
+		
+		if(!(((Arrow) evt.getDamager()).getShooter() instanceof Player))
+			return;
+		
+		Player damager = (Player) ((Arrow) evt.getDamager()).getShooter();
+		Player victim = (Player) evt.getEntity();
+		
 		victim.setFlying(false);
 		damager.setFlying(false);
 		victim.setGameMode(GameMode.SURVIVAL);
