@@ -11,6 +11,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 public class PvpAdminCommand implements CommandExecutor
 {
@@ -24,7 +26,7 @@ public class PvpAdminCommand implements CommandExecutor
 		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
 		
-		plugin.getLogger().info("Initialized PvpAdminCommand executor.");
+		plugin.getLogger().info("Initialized " + this.getClass().getName());
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -50,7 +52,11 @@ public class PvpAdminCommand implements CommandExecutor
 			}
 			else if(args[0].equalsIgnoreCase("reload"))
 			{
-				plugin.reloadConfig();
+				plugin.saveConfig();
+				PluginManager pluginManager = Bukkit.getPluginManager();
+				utils.sendDebug(sender.getName() + " reload PvpToggle.");
+				pluginManager.disablePlugin((Plugin) plugin);
+				pluginManager.enablePlugin((Plugin) plugin);
 				sender.sendMessage(utils.getMessage("cmd_pvpadmin_reload").replace("$player", sender.getName()));
 				return true;
 			}

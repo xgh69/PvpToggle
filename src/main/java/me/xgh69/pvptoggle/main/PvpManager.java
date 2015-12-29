@@ -21,6 +21,8 @@ public class PvpManager
 		utils = plugin.getUtils();
 		inFight = new HashMap<String, Long>();
 		allowedCommands = new ArrayList<String>();
+		
+		plugin.getLogger().info("Initialized " + this.getClass().getName());
 	}
 	
 	public boolean containsPvp(UUID uid)
@@ -82,7 +84,7 @@ public class PvpManager
 	
 	public boolean isTimeOver(String playerName)
 	{
-		int minutes = (int) utils.getSettings("fight_minutes");
+		int minutes = (int) utils.getOption("fight_minutes");
 		long i = inFight.get(playerName);
 		long j = utils.getTimeStamp();
 		if(i + minutes*60*1000 == j || j > i + minutes*60*1000)

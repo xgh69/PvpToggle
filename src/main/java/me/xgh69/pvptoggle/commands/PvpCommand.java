@@ -22,7 +22,7 @@ public class PvpCommand implements CommandExecutor
 		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
 		
-		plugin.getLogger().info("Initialized PvpCommand executor.");
+		plugin.getLogger().info("Initialized " + this.getClass().getName());
 	}
 	
 	@Override
@@ -47,12 +47,14 @@ public class PvpCommand implements CommandExecutor
 			{
 				pvpmanager.setPvp(player.getUniqueId(), true);
 				player.sendMessage(utils.getMessage("cmd_pvp_enable").replace("$player", player.getName()));
+				utils.sendDebug(player.getName() + "'s protection set to ENABLE.");
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("off"))
 			{
 				pvpmanager.setPvp(player.getUniqueId(), false);
 				player.sendMessage(utils.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
+				utils.sendDebug(player.getName() + "'s protection set to DISABLE.");
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("status"))

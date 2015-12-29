@@ -1,0 +1,42 @@
+# PvpToggle Configuration
+# Version 2.1
+messages:
+  first_join: '&aFight protection is enabled.'
+  join: '&bYour pvp protection is '
+  join_enable: '&aenabled&b.'
+  join_disable: '&cdisabled&b.'
+  logout_join: '&cYou are logout.'
+  logout_left: '&c$player logout in fight.'
+  cuboid_pvponly_enter: '&cYou are entering on perm pvp region.'
+  cuboid_pvponly_exit: '&cYou are exiting from perm pvp region.'
+  cuboid_pvponly_cmd_block: '&cYou cannot use this command here.'
+  stopfight: '&aYou can logout now.'
+  cmd_infight: '&cPlease wait $minutes minutes after fight.'
+  player_protected: '&c$player is protected.'
+  player_damager: '&cDon''t logout. You hurted $player.'
+  player_damaged: '&cDon''t logout. $player hurt you.'
+  cmd_pvp_usage: '&aUsage: /pvp disable | enable | status.'
+  cmd_pvp_enable: '&aYour pvp protection is enabled.'
+  cmd_pvp_disable: '&cYour pvp protection is disabled.'
+  cmd_pvp_status: '&bYour pvp protection is '
+  cmd_pvp_status_enable: '&aenabled&b.'
+  cmd_pvp_status_disable: '&cdisabled&b.'
+  cmd_pvp_console: '&cConsole cannot fight.'
+  cmd_pvpadmin_reload: '&cPvpToggle reloaded.'
+  cmd_pvpadmin_noperm: '&cNo permission.'
+  cmd_pvpadmin_usage: '&aUsage: /pvpadmin enable <name> | disable <name> | status
+    <name> | reload | help | version'
+  cmd_pvpadmin_enable: '&aEnabled $player''s pvp proection.'
+  cmd_pvpadmin_disable: '&cDisabled $player''s pvp protection.'
+  cmd_pvpadmin_status: '&b$player''s protection is '
+  cmd_pvpadmin_status_enable: '&aenabled'
+  cmd_pvpadmin_status_disable: '&cdisabled'
+  cmd_pvpadmin_offline: '&c$player is offline.'
+  fight_enderpearl: '&cEnder pearls are blocked.'
+  cmd_pvpadmin_debug: '&cDebugging is '
+  cmd_pvpadmin_debug_enable: '&aenabled&c.'
+  cmd_pvpadmin_debug_disable: '&4disabled&c.'
+settings:
+  pvp_on_first_join: true
+  fight_minutes: 1
+users: ''

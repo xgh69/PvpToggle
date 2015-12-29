@@ -8,13 +8,11 @@ import me.xgh69.pvptoggle.main.PvpToggle;
 import me.xgh69.pvptoggle.main.PvpUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -42,7 +40,7 @@ public class PlayerListener implements Listener
 		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
 		
-		plugin.getLogger().info("Initialized PlayerListener.");
+		plugin.getLogger().info("Initialized " + this.getClass().getName());
 	}
 	
 	@EventHandler
@@ -52,19 +50,17 @@ public class PlayerListener implements Listener
 		
 		if(!pvpmanager.containsPvp(player.getUniqueId()))
 		{
-			boolean pvp = (boolean) utils.getSettings("pvp_on_first_join");
+			boolean pvp = (boolean) utils.getOption("pvp_on_first_join");
 			pvpmanager.setPvp(player.getUniqueId(), pvp);
 			player.sendMessage(utils.getMessage("first_join").replace("$player", player.getName()));
-			if(utils.isDebug())
-				utils.sendDebug("Player " + player.getName() + " pvp protection setting to enabled (first join).");
+			utils.sendDebug("Player " + player.getName() + " pvp protection setting to enabled (first join).");
 		}
 		
 		if(pvpmanager.isFight(player.getName()))
 		{
 			player.sendMessage(utils.getMessage("logout_join").replace("$player", player.getName()));
 			pvpmanager.removeFight(player.getName());
-			if(utils.isDebug())
-				utils.sendDebug("Player " + player.getName() + " is joined after logout in fight.");
+			utils.sendDebug("Player " + player.getName() + " is joined after logout in fight.");
 		}
 		
 		if(pvpmanager.getPvp(player.getUniqueId()))
@@ -90,8 +86,7 @@ public class PlayerListener implements Listener
 				pvpmanager.removeFight(player.getName());
 				player.setPlayerListName(player.getName());
 				player.sendMessage(utils.getMessage("stopfight").replace("$player", player.getName()));
-				if(utils.isDebug())
-					utils.sendDebug("Stopped fight with " + player.getName());
+				utils.sendDebug("Stopped fight with " + player.getName());
 			}
 		}
 		
@@ -126,14 +121,15 @@ public class PlayerListener implements Listener
 			if(pvpmanager.isTimeOver(player.getName()))
 			{
 				pvpmanager.removeFight(player.getName());
-				if(utils.isDebug())
-					utils.sendDebug("Stopped fight with " + player.getName());
+				utils.sendDebug("Stopped fight with " + player.getName());
 			}
 			else
 			{
 				if(!pvpmanager.isAllowedCommand(evt.getMessage()))
 				{
-					player.sendMessage(utils.getMessage("cmd_infight").replace("$player", player.getName()));
+					player.sendMessage(utils.getMessage("cmd_infight")
+							.replace("$player", player.getName())
+							.replace("$minutes", utils.getOption("fight_minutes").toString()));
 					evt.setCancelled(true);
 				}
 				else
@@ -176,8 +172,7 @@ public class PlayerListener implements Listener
 			Player player = evt.getPlayer();
 			evt.setCancelled(true);
 			player.sendMessage(utils.getMessage("fight_enderpearl"));
-			if(utils.isDebug())
-				utils.sendDebug("Player " + player.getName() + " try use ender pearl in fight.");
+			utils.sendDebug("Player " + player.getName() + " try use ender pearl in fight.");
 		}
 	}
 	

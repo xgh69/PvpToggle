@@ -30,7 +30,7 @@ public class EntityListener implements Listener
 		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
 		
-		plugin.getLogger().info("Initialized EntityListener.");
+		plugin.getLogger().info("Initialized " + this.getClass().getName());
 	}
 	
 	@EventHandler
@@ -100,7 +100,7 @@ public class EntityListener implements Listener
 	
 	@SuppressWarnings("deprecation")
 	@EventHandler
-	public void onShoot(EntityDamageByEntityEvent evt)
+	public void onShootByEntity(EntityDamageByEntityEvent evt)
 	{
 		if(!(evt.getDamager() instanceof Arrow) || !(evt.getEntity() instanceof Player))
 			return;
