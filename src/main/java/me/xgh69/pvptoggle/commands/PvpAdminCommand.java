@@ -53,6 +53,7 @@ public class PvpAdminCommand implements CommandExecutor
 			else if(args[0].equalsIgnoreCase("reload"))
 			{
 				plugin.saveConfig();
+				plugin.reloadConfig();
 				PluginManager pluginManager = Bukkit.getPluginManager();
 				utils.sendDebug(sender.getName() + " reload PvpToggle.");
 				pluginManager.disablePlugin((Plugin) plugin);
