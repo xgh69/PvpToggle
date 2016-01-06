@@ -47,11 +47,6 @@ public class PvpUtils
 		Bukkit.getConsoleSender().sendMessage(event.getMessage());
 	}
 	
-	public void logError(String s)
-	{
-		Bukkit.getConsoleSender().sendMessage("[PvpToggle] " + ChatColor.RED + s);
-	}
-	
 	public String getMessage(String msg)
 	{
 		msg = msg.replace(".", "_");

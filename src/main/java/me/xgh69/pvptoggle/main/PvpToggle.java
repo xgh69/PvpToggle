@@ -81,7 +81,7 @@ public final class PvpToggle extends JavaPlugin
 		if(!dep)
 		{
 			PluginManager pluginManager = Bukkit.getPluginManager();
-			utils.logError("Please install WorldEdit and WorldGuard to use PvpToggle plugin.");
+			getLogger().warning("Please install WorldEdit and WorldGuard to use PvpToggle plugin.");
 			pluginManager.disablePlugin((Plugin) pvptoggle);
 		}
 		else

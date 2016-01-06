@@ -3,7 +3,6 @@ package me.xgh69.pvptoggle.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.xgh69.pvptoggle.main.PvpManager;
 import me.xgh69.pvptoggle.main.PvpToggle;
 import me.xgh69.pvptoggle.main.PvpUtils;
 
@@ -30,14 +29,12 @@ public class PlayerListener implements Listener
 {
 	private List<String> inPvp;
 	private PvpToggle plugin;
-	private PvpManager pvpmanager;
 	private PvpUtils utils;
 	
 	public PlayerListener()
 	{
 		inPvp = new ArrayList<String>();
 		plugin = PvpToggle.getInstance();
-		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
 		
 		plugin.getLogger().info("Initialized " + this.getClass().getName());
@@ -48,22 +45,22 @@ public class PlayerListener implements Listener
 	{
 		Player player = evt.getPlayer();
 		
-		if(!pvpmanager.containsPvp(player.getUniqueId()))
+		if(!plugin.getPvpManager().containsPvp(player.getUniqueId()))
 		{
 			boolean pvp = (boolean) utils.getOption("pvp_on_first_join");
-			pvpmanager.setPvp(player.getUniqueId(), pvp);
+			plugin.getPvpManager().setPvp(player.getUniqueId(), pvp);
 			player.sendMessage(utils.getMessage("first_join").replace("$player", player.getName()));
 			utils.sendDebug("Player " + player.getName() + " pvp protection setting to enabled (first join).");
 		}
 		
-		if(pvpmanager.isFight(player.getName()))
+		if(plugin.getPvpManager().isFight(player.getName()))
 		{
 			player.sendMessage(utils.getMessage("logout_join").replace("$player", player.getName()));
-			pvpmanager.removeFight(player.getName());
+			plugin.getPvpManager().removeFight(player.getName());
 			utils.sendDebug("Player " + player.getName() + " is joined after logout in fight.");
 		}
 		
-		if(pvpmanager.getPvp(player.getUniqueId()))
+		if(plugin.getPvpManager().getPvp(player.getUniqueId()))
 		{
 			player.sendMessage(utils.getMessage("join").replace("$player", player.getName()) + utils.getMessage("join_enable").replace("$player", player.getName()));
 		}
@@ -79,11 +76,11 @@ public class PlayerListener implements Listener
 	{
 		Player player = evt.getPlayer();
 		
-		if(pvpmanager.isFight(player.getName()))
+		if(plugin.getPvpManager().isFight(player.getName()))
 		{
-			if(pvpmanager.isTimeOver(player.getName()))
+			if(plugin.getPvpManager().isTimeOver(player.getName()))
 			{
-				pvpmanager.removeFight(player.getName());
+				plugin.getPvpManager().removeFight(player.getName());
 				player.setPlayerListName(player.getName());
 				player.sendMessage(utils.getMessage("stopfight").replace("$player", player.getName()));
 				utils.sendDebug("Stopped fight with " + player.getName());
@@ -116,16 +113,16 @@ public class PlayerListener implements Listener
 	{
 		Player player = evt.getPlayer();
 		
-		if(pvpmanager.isFight(player.getName()))
+		if(plugin.getPvpManager().isFight(player.getName()))
 		{
-			if(pvpmanager.isTimeOver(player.getName()))
+			if(plugin.getPvpManager().isTimeOver(player.getName()))
 			{
-				pvpmanager.removeFight(player.getName());
+				plugin.getPvpManager().removeFight(player.getName());
 				utils.sendDebug("Stopped fight with " + player.getName());
 			}
 			else
 			{
-				if(!pvpmanager.isAllowedCommand(evt.getMessage()))
+				if(!plugin.getPvpManager().isAllowedCommand(evt.getMessage()))
 				{
 					player.sendMessage(utils.getMessage("cmd_infight")
 							.replace("$player", player.getName())
@@ -157,7 +154,7 @@ public class PlayerListener implements Listener
 	{
 		Player player = evt.getPlayer();
 		
-		if(pvpmanager.isFight(player.getName()))
+		if(plugin.getPvpManager().isFight(player.getName()))
 		{
 			Bukkit.broadcastMessage(utils.getMessage("logout_left").replace("$player", player.getName()));
 			player.setHealth(0.00D);
@@ -167,7 +164,7 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onInteract(PlayerInteractEvent evt)
 	{
-		if(evt.getAction() == Action.RIGHT_CLICK_AIR && evt.getMaterial() == Material.ENDER_PEARL && pvpmanager.isFight(evt.getPlayer().getName()))
+		if(evt.getAction() == Action.RIGHT_CLICK_AIR && evt.getMaterial() == Material.ENDER_PEARL && plugin.getPvpManager().isFight(evt.getPlayer().getName()))
 		{
 			Player player = evt.getPlayer();
 			evt.setCancelled(true);
@@ -184,7 +181,7 @@ public class PlayerListener implements Listener
 		
 		Player target = (Player) evt.getRightClicked();
 		Player player = evt.getPlayer();
-		if(pvpmanager.getPvp(target.getUniqueId()))
+		if(plugin.getPvpManager().getPvp(target.getUniqueId()))
 			player.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", target.getName()) + utils.getMessage("cmd_pvpadmin_status_enable"));
 		else
 			player.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", target.getName()) + utils.getMessage("cmd_pvpadmin_status_disable"));

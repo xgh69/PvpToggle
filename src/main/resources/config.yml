@@ -1,5 +1,4 @@
 # PvpToggle Configuration
-# Version 2.1
 messages:
   first_join: '&aFight protection is enabled.'
   join: '&bYour pvp protection is '

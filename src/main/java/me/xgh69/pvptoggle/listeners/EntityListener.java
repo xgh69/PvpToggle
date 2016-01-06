@@ -1,6 +1,5 @@
 package me.xgh69.pvptoggle.listeners;
 
-import me.xgh69.pvptoggle.main.PvpManager;
 import me.xgh69.pvptoggle.main.PvpToggle;
 import me.xgh69.pvptoggle.main.PvpUtils;
 
@@ -21,13 +20,11 @@ public class EntityListener implements Listener
 {
 	
 	private PvpToggle plugin;
-	private PvpManager pvpmanager;
 	private PvpUtils utils;
 	
 	public EntityListener()
 	{
 		plugin = PvpToggle.getInstance();
-		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
 		
 		plugin.getLogger().info("Initialized " + this.getClass().getName());
@@ -57,7 +54,7 @@ public class EntityListener implements Listener
 				return;
 			}
 			
-			if(pvpmanager.getPvp(victim.getUniqueId()) || pvpmanager.getPvp(damager.getUniqueId()))
+			if(plugin.getPvpManager().getPvp(victim.getUniqueId()) || plugin.getPvpManager().getPvp(damager.getUniqueId()))
 			{
 				damager.sendMessage(utils.getMessage("player_protected").replace("$player", victim.getName()));
 				evt.setCancelled(true);
@@ -66,34 +63,34 @@ public class EntityListener implements Listener
 			else
 			{
 				evt.setCancelled(false);
-				if(!pvpmanager.isFight(victim.getName()))
+				if(!plugin.getPvpManager().isFight(victim.getName()))
 					victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
 				
-				if(!pvpmanager.isFight(damager.getName()))
+				if(!plugin.getPvpManager().isFight(damager.getName()))
 					damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 				
 				long time = utils.getTimeStamp();
-				pvpmanager.addFight(damager.getName(), time);
-				pvpmanager.addFight(victim.getName(), time);
+				plugin.getPvpManager().addFight(damager.getName(), time);
+				plugin.getPvpManager().addFight(victim.getName(), time);
 				return;
 			}
 		}
 		else if(set.getFlag(DefaultFlag.PVP) == State.ALLOW)
 		{
 			evt.setCancelled(false);
-			if(!pvpmanager.isFight(victim.getName()) && !pvpmanager.isFight(damager.getName()) && utils.isDebug())
+			if(!plugin.getPvpManager().isFight(victim.getName()) && !plugin.getPvpManager().isFight(damager.getName()) && utils.isDebug())
 				utils.sendDebug("Player " + damager.getName() + " start fight with " + victim.getName());
 			
-			if(!pvpmanager.isFight(victim.getName()))
+			if(!plugin.getPvpManager().isFight(victim.getName()))
 				victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
 			
-			if(!pvpmanager.isFight(damager.getName()))
+			if(!plugin.getPvpManager().isFight(damager.getName()))
 				damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 			
 			
 			long time = utils.getTimeStamp();
-			pvpmanager.addFight(damager.getName(), time);
-			pvpmanager.addFight(victim.getName(), time);
+			plugin.getPvpManager().addFight(damager.getName(), time);
+			plugin.getPvpManager().addFight(victim.getName(), time);
 			return;
 		}
 	}
@@ -126,7 +123,7 @@ public class EntityListener implements Listener
 				return;
 			}
 			
-			if(pvpmanager.getPvp(victim.getUniqueId()) || pvpmanager.getPvp(damager.getUniqueId()))
+			if(plugin.getPvpManager().getPvp(victim.getUniqueId()) || plugin.getPvpManager().getPvp(damager.getUniqueId()))
 			{
 				damager.sendMessage(utils.getMessage("player_protected").replace("$player", victim.getName()));
 				evt.setCancelled(true);
@@ -135,34 +132,34 @@ public class EntityListener implements Listener
 			else
 			{
 				evt.setCancelled(false);
-				if(!pvpmanager.isFight(victim.getName()))
+				if(!plugin.getPvpManager().isFight(victim.getName()))
 					victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
 				
-				if(!pvpmanager.isFight(damager.getName()))
+				if(!plugin.getPvpManager().isFight(damager.getName()))
 					damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 				
 				long time = utils.getTimeStamp();
-				pvpmanager.addFight(damager.getName(), time);
-				pvpmanager.addFight(victim.getName(), time);
+				plugin.getPvpManager().addFight(damager.getName(), time);
+				plugin.getPvpManager().addFight(victim.getName(), time);
 				return;
 			}
 		}
 		else if(set.getFlag(DefaultFlag.PVP) == State.ALLOW)
 		{
 			evt.setCancelled(false);
-			if(!pvpmanager.isFight(victim.getName()) && !pvpmanager.isFight(damager.getName()) && utils.isDebug())
+			if(!plugin.getPvpManager().isFight(victim.getName()) && !plugin.getPvpManager().isFight(damager.getName()) && utils.isDebug())
 				utils.sendDebug("Player " + damager.getName() + " start fight with " + victim.getName());
 			
-			if(!pvpmanager.isFight(victim.getName()))
+			if(!plugin.getPvpManager().isFight(victim.getName()))
 				victim.sendMessage(utils.getMessage("player_damaged").replace("$player", damager.getName()));
 			
-			if(!pvpmanager.isFight(damager.getName()))
+			if(!plugin.getPvpManager().isFight(damager.getName()))
 				damager.sendMessage(utils.getMessage("player_damager").replace("$player", victim.getName()));
 			
 			
 			long time = utils.getTimeStamp();
-			pvpmanager.addFight(damager.getName(), time);
-			pvpmanager.addFight(victim.getName(), time);
+			plugin.getPvpManager().addFight(damager.getName(), time);
+			plugin.getPvpManager().addFight(victim.getName(), time);
 			return;
 		}
 	}

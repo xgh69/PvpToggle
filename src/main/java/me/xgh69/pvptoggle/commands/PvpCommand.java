@@ -1,6 +1,5 @@
 package me.xgh69.pvptoggle.commands;
 
-import me.xgh69.pvptoggle.main.PvpManager;
 import me.xgh69.pvptoggle.main.PvpToggle;
 import me.xgh69.pvptoggle.main.PvpUtils;
 
@@ -13,13 +12,11 @@ import org.bukkit.entity.Player;
 public class PvpCommand implements CommandExecutor
 {
 	private PvpToggle plugin;
-	private PvpManager pvpmanager;
 	private PvpUtils utils;
 	
 	public PvpCommand()
 	{
 		plugin = PvpToggle.getInstance();
-		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
 		
 		plugin.getLogger().info("Initialized " + this.getClass().getName());
@@ -45,26 +42,26 @@ public class PvpCommand implements CommandExecutor
 			}
 			else if(args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("on"))
 			{
-				pvpmanager.setPvp(player.getUniqueId(), true);
+				plugin.getPvpManager().setPvp(player.getUniqueId(), true);
 				player.sendMessage(utils.getMessage("cmd_pvp_enable").replace("$player", player.getName()));
 				utils.sendDebug(player.getName() + "'s protection set to ENABLE.");
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("off"))
 			{
-				pvpmanager.setPvp(player.getUniqueId(), false);
+				plugin.getPvpManager().setPvp(player.getUniqueId(), false);
 				player.sendMessage(utils.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
 				utils.sendDebug(player.getName() + "'s protection set to DISABLE.");
 				return true;
 			}
 			else if(args[0].equalsIgnoreCase("status"))
 			{
-				if(pvpmanager.getPvp(player.getUniqueId()))
+				if(plugin.getPvpManager().getPvp(player.getUniqueId()))
 				{
 					player.sendMessage(utils.getMessage("cmd_pvp_status").replace("$player", player.getName()) + utils.getMessage("cmd_pvp_status_enable"));
 					return true;
 				}
-				else if(!pvpmanager.getPvp(player.getUniqueId()))
+				else if(!plugin.getPvpManager().getPvp(player.getUniqueId()))
 				{
 					player.sendMessage(utils.getMessage("cmd_pvp_status").replace("$player", player.getName()) + utils.getMessage("cmd_pvp_status_disable"));
 					return true;

@@ -1,6 +1,5 @@
 package me.xgh69.pvptoggle.commands;
 
-import me.xgh69.pvptoggle.main.PvpManager;
 import me.xgh69.pvptoggle.main.PvpToggle;
 import me.xgh69.pvptoggle.main.PvpUtils;
 
@@ -17,13 +16,11 @@ import org.bukkit.plugin.PluginManager;
 public class PvpAdminCommand implements CommandExecutor
 {
 	private PvpToggle plugin;
-	private PvpManager pvpmanager;
 	private PvpUtils utils;
 	
 	public PvpAdminCommand()
 	{
 		plugin = PvpToggle.getInstance();
-		pvpmanager = plugin.getPvpManager();
 		utils = plugin.getUtils();
 		
 		plugin.getLogger().info("Initialized " + this.getClass().getName());
@@ -74,7 +71,7 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					pvpmanager.setPvp(player.getUniqueId(), true);
+					plugin.getPvpManager().setPvp(player.getUniqueId(), true);
 					player.sendMessage(utils.getMessage("cmd_pvp_enable").replace("$player", player.getName()));					
 					sender.sendMessage(utils.getMessage("cmd_pvpadmin_disable").replace("$player", player.getName()));
 					return true;
@@ -91,7 +88,7 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					pvpmanager.setPvp(player.getUniqueId(), false);
+					plugin.getPvpManager().setPvp(player.getUniqueId(), false);
 					
 					player.sendMessage(utils.getMessage("cmd_pvp_disable").replace("$player", player.getName()));
 					sender.sendMessage(utils.getMessage("cmd_pvpadmin_disable").replace("$player", player.getName()));
@@ -109,12 +106,12 @@ public class PvpAdminCommand implements CommandExecutor
 				if(offlinePlayer.isOnline())
 				{
 					Player player = (Player) offlinePlayer;
-					if(pvpmanager.getPvp(player.getUniqueId()))
+					if(plugin.getPvpManager().getPvp(player.getUniqueId()))
 					{
 						sender.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + utils.getMessage("cmd_pvpadmin_status_enable"));
 						return true;
 					}
-					else if(!pvpmanager.getPvp(player.getUniqueId()))
+					else if(!plugin.getPvpManager().getPvp(player.getUniqueId()))
 					{
 						sender.sendMessage(utils.getMessage("cmd_pvpadmin_status").replace("$player", player.getName()) + utils.getMessage("cmd_pvpadmin_status_disable"));
 						return true;					
